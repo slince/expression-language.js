@@ -153,6 +153,9 @@ class Lexer{
                 case '.':
                     type = TokenType.T_DOT;
                     break;
+                case '?':
+                    type = TokenType.T_QUESTION_MARK;
+                    break;
                 default:
                     throw new SyntaxError(`Unrecognized punctuation ${ch}`, this.position());
             }
@@ -160,6 +163,8 @@ class Lexer{
             token = new Token(type, null, this.position());
             tokens.add(token);
         }
+        this.offset ++;
+        tokens.add(new Token(TokenType.T_EOF, null, this.position()));
         return tokens;
     }
 

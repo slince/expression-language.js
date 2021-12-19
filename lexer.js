@@ -1,7 +1,7 @@
 import Lexer from "./src/lexer.js";
 
 const code = `
-apple.name == 'pear' && sell(apple)
+fruit.name == 'apple' ? sell(fruit, 5, "bob") : false
 `;
 
 const lexer = new Lexer(code);

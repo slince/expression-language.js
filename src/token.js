@@ -31,6 +31,7 @@ const TokenType = {
     T_COLON: 29, // :
     T_SEMICOLON: 30, // ;
     T_DOT: 31, // ;
+    T_QUESTION_MARK: 32, // ?
 };
 
 class Token
@@ -40,15 +41,32 @@ class Token
         this.value = value;
         this.position = position;
     }
+
+    test(type){
+        return this.type === type;
+    }
 }
 
 class TokenStream{
     constructor() {
+        this.offset = 0;
         this.tokens = [];
     }
 
     add(token){
         this.tokens.push(token);
+    }
+
+    current(){
+        return this.tokens[this.offset];
+    }
+
+    expect(){
+
+    }
+
+    eof(){
+        return this.tokens[this.offset].type === TokenType.T_EOF;
     }
 }
 
