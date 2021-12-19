@@ -1,0 +1,13 @@
+{
+  "name": "expression-language",
+  "version": "1.0.0",
+  "description": "An engine that can compile and evaluate expressions written in javascript",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": ["lexer", "parser", "ast", "expression-language"],
+  "author": "slince",
+  "license": "MIT"
+}
