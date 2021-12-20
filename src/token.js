@@ -1,5 +1,6 @@
-import SyntaxError from "./errors";
+import SyntaxError from "./errors.js";
 
+// token type enum
 const TokenType = {
     T_EOF: 0, // eof
     T_STR: 1, // abc
@@ -32,9 +33,45 @@ const TokenType = {
     T_COMMA: 28, // ,
     T_COLON: 29, // :
     T_SEMICOLON: 30, // ;
-    T_DOT: 31, // ;
+    T_DOT: 31, // .
     T_QUESTION_MARK: 32, // ?
 };
+
+// token name
+const Tokens = {};
+Tokens[TokenType.T_EOF] = 'eof';
+Tokens[TokenType.T_STR] = 'abc';
+Tokens[TokenType.T_NUM] = '123';
+Tokens[TokenType.T_ID] = 'foo';
+Tokens[TokenType.T_ADD] = '+';
+Tokens[TokenType.T_SUB] = '-';
+Tokens[TokenType.T_MUL] = '*';
+Tokens[TokenType.T_DIV] = '/';
+Tokens[TokenType.T_MOD] = '%';
+Tokens[TokenType.T_INC] = '++';
+Tokens[TokenType.T_DEC] = '--';
+Tokens[TokenType.T_NOT] = '!';
+Tokens[TokenType.T_NEQ] = '!=';
+Tokens[TokenType.T_LEA] = '&';
+Tokens[TokenType.T_AND] = '&&';
+Tokens[TokenType.T_OR] = '||';
+Tokens[TokenType.T_ASSIGN] = '=';
+Tokens[TokenType.T_GT] = '>';
+Tokens[TokenType.T_GE] = '>=';
+Tokens[TokenType.T_LT] = '<';
+Tokens[TokenType.T_LE] = '<=';
+Tokens[TokenType.T_EQ] = '==';
+Tokens[TokenType.T_LPAREN] = '(';
+Tokens[TokenType.T_LBRACKET] = '[';
+Tokens[TokenType.T_LBRACE] = '{';
+Tokens[TokenType.T_RPAREN] = ')';
+Tokens[TokenType.T_RBRACKET] = ']';
+Tokens[TokenType.T_RBRACE] = '}';
+Tokens[TokenType.T_COMMA] = ',';
+Tokens[TokenType.T_COLON] = ':';
+Tokens[TokenType.T_SEMICOLON] = ';';
+Tokens[TokenType.T_DOT] = '.';
+Tokens[TokenType.T_QUESTION_MARK] = '?'
 
 class Token
 {
@@ -68,12 +105,6 @@ class TokenStream{
         return this.tokens[this.index ++]
     }
 
-    nextIf(type, value){
-        if (this.current().test(type, value)) {
-            return this.next();
-        }
-    }
-
     look(){
         return this.tokens[this.index + 1];
     }
@@ -93,4 +124,4 @@ class TokenStream{
     }
 }
 
-export {TokenType, Token, TokenStream}
+export {TokenType, Tokens, Token, TokenStream}

@@ -1,6 +1,6 @@
-import Node from "./node";
+import Stmt from "../stmt.js";
 
-class Assign extends Node{
+class AssignStatement extends Stmt{
     constructor(variable, value, lineno) {
         super(null, lineno);
         this.variable = variable;
@@ -8,4 +8,4 @@ class Assign extends Node{
     }
 }
 
-export default Assign;
+export default AssignStatement;
