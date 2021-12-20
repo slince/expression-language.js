@@ -1,4 +1,4 @@
-import {TokenType} from "./token";
+import {Tokens, TokenType} from "./token";
 import Identifier from "./ast/identifier";
 import FunctionCallExpression from "./ast/expr/function_call";
 import PropertyAccessExpression from "./ast/expr/property_access";
@@ -7,6 +7,7 @@ import LiteralExpression from "./ast/expr/literal";
 import AssignStatement from "./ast/stmt/assign";
 import {MapExpression} from "./ast/expr/map";
 import SyntaxError from "./errors";
+import BinaryExpression from "./ast/expr/binary";
 
 const OPERATOR_LEFT = 1;
 const OPERATOR_RIGHT = 2;
@@ -48,15 +49,9 @@ class Parser{
 
         }
     }
+
     parseExpression(){
-        const expr = this.parsePrimaryExpression();
-        const token = this.tokens.current();
-        let node;
-        switch (token.type) {
-            case TokenType.T_ADD:
-                break;
-        }
-        return node;
+        return this.parsePrimaryExpression();
     }
 
     parsePrimaryExpression(){
@@ -70,33 +65,7 @@ class Parser{
                 break;
             // identifier
             case TokenType.T_ID:
-                this.tokens.next();
-                switch (token.value) {
-                    case 'true':
-                    case 'TRUE':
-                        node = new LiteralExpression(true, token.value, token.position);
-                        break;
-                    case 'false':
-                    case 'FALSE':
-                        node = new LiteralExpression(false, token.value, token.position);
-                        break;
-                    case 'null':
-                    case 'NULL':
-                        node = new LiteralExpression(null, token.value, token.position);
-                        break;
-                    default:
-                        const identifier = new Identifier(token.value, token.position);
-                        const next = this.tokens.look();
-                        if (next.test(TokenType.T_ASSIGN)) {     // fruit = 'apple';
-                            node = new AssignStatement(identifier, this.parseExpression(), token.position);
-                        } else if (next.test(TokenType.T_LPAREN)) {  // sell_fruit(fruit, 'bob')
-                            node = new FunctionCallExpression(identifier, this.parseArguments(), token.position);
-                        } else if (next.test(TokenType.T_DOT)) {     // fruit.name
-                            node = new PropertyAccessExpression(identifier, this.parseArguments(), token.position);
-                        } else { // a + b
-
-                        }
-                }
+                node = this.parseIdentifierExpression();
                 break;
             // punctuation
             case TokenType.T_LPAREN:
@@ -112,8 +81,75 @@ class Parser{
         return node;
     }
 
+    parseIdentifierExpression(){
+        const token = this.tokens.current();
+        let node;
+        this.tokens.next();
+        switch (token.value) {
+            case 'true':
+            case 'TRUE':
+                node = new LiteralExpression(true, token.value, token.position);
+                break;
+            case 'false':
+            case 'FALSE':
+                node = new LiteralExpression(false, token.value, token.position);
+                break;
+            case 'null':
+            case 'NULL':
+                node = new LiteralExpression(null, token.value, token.position);
+                break;
+            default:
+                const identifier = new Identifier(token.value, token.position);
+                const next = this.tokens.current();
+                if (next.test(TokenType.T_ASSIGN)) {     // fruit = 'apple';
+                    node = new AssignStatement(identifier, this.parseExpression(), token.position);
+                } else if (next.test(TokenType.T_LPAREN)) {  // sell_fruit(fruit, 'bob')
+                    node = new FunctionCallExpression(identifier, this.parseArguments(), token.position);
+                } else if (next.test(TokenType.T_DOT)) {     // fruit.name
+                    node = new PropertyAccessExpression(identifier, this.parseExpression(), token.position);
+                } else if (typeof binaryOperators[Tokens[next.type]] !== 'undefined') {
+                    // a + b / c * d
+                    // a + b + c + d
+                    while (typeof binaryOperators[Tokens[this.tokens.current().type]] !== 'undefined') {
+                        const current = this.tokens.current();
+                        this.tokens.next();
+                        const expr = new BinaryExpression(identifier, Tokens[current.type], this.parseExpression());
+                    }
+                }
+        }
+        return node;
+    }
+
+    parseBinaryExpression(precedence, left){
+        // a + b * c / d
+        // a * b + c
+        while (typeof binaryOperators[Tokens[this.tokens.current().type]] !== 'undefined') {
+            const operator = Tokens[this.tokens.current().type];
+            const currentPrecedence = this.currentTokenPrecedence();
+            if (currentPrecedence < precedence) {
+                break;
+            }
+            this.tokens.next();
+            let right = this.parsePrimaryExpression();
+
+            const nextPrecedence = this.currentTokenPrecedence();
+            if (currentPrecedence < nextPrecedence) {
+                right = this.parseBinaryExpression(currentPrecedence, right);
+            }
+            left = new BinaryExpression(left, operator, right);
+        }
+        return left;
+    }
+
+    currentTokenPrecedence(){
+        const current = this.tokens.current();
+        if (typeof binaryOperators[Tokens[current.type]] !== 'undefined') {
+            return binaryOperators[Tokens[current.type]].precedence;
+        }
+        return -1;
+    }
+
     parseArrayExpression(token){
-        this.tokens.expect(TokenType.T_LBRACKET, null, 'An array element must begin with an opening brackets');
         const node = new ArrayExpression([], token.position);
         while (!this.tokens.current().test(TokenType.T_RBRACKET)) {
             if (!node.isEmpty()) {
@@ -154,8 +190,6 @@ class Parser{
         this.tokens.expect(TokenType.T_RPAREN, null, 'A list of arguments must be closed by a parenthesis');
         return args;
     }
-
-
 }
 
 export default Parser;

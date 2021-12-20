@@ -40,9 +40,9 @@ const TokenType = {
 // token name
 const Tokens = {};
 Tokens[TokenType.T_EOF] = 'eof';
-Tokens[TokenType.T_STR] = 'abc';
-Tokens[TokenType.T_NUM] = '123';
-Tokens[TokenType.T_ID] = 'foo';
+Tokens[TokenType.T_STR] = 'string';
+Tokens[TokenType.T_NUM] = 'number';
+Tokens[TokenType.T_ID] = 'id';
 Tokens[TokenType.T_ADD] = '+';
 Tokens[TokenType.T_SUB] = '-';
 Tokens[TokenType.T_MUL] = '*';
