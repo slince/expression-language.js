@@ -1,3 +1,5 @@
+import SyntaxError from "./errors";
+
 const TokenType = {
     T_EOF: 0, // eof
     T_STR: 1, // abc
@@ -48,8 +50,9 @@ class Token
 }
 
 class TokenStream{
+
     constructor() {
-        this.offset = 0;
+        this.index = 0;
         this.tokens = [];
     }
 
@@ -58,15 +61,35 @@ class TokenStream{
     }
 
     current(){
-        return this.tokens[this.offset];
+        return this.tokens[this.index];
     }
 
-    expect(){
+    next(){
+        return this.tokens[this.index ++]
+    }
 
+    nextIf(type, value){
+        if (this.current().test(type, value)) {
+            return this.next();
+        }
+    }
+
+    look(){
+        return this.tokens[this.index + 1];
+    }
+
+    expect(type, value,  message) {
+        let token = this.current();
+        if (!token.test(type, value)) {
+            const message = `${message ? message+'. ' : ''}Unexpected token "${token.type}" of value "${token.value}" ("${type}" expected ${value ? 'with value ' + value : ''}}).`;
+            throw new SyntaxError(message, token.position);
+        }
+        this.next();
+        return token;
     }
 
     eof(){
-        return this.tokens[this.offset].type === TokenType.T_EOF;
+        return this.tokens[this.index].type === TokenType.T_EOF;
     }
 }
 

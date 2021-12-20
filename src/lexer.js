@@ -212,7 +212,7 @@ class Lexer{
     }
 
     next() {
-        const ch = this.source[this.offset ++];
+        const ch = this.source.charAt(this.offset ++);
         if (ch === "\n") {
             this.line ++;
             this.column = 0;
