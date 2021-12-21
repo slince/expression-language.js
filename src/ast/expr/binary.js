@@ -1,4 +1,4 @@
-import Expr from "../expr";
+import Expr from "../expr.js";
 
 class BinaryExpression extends Expr{
 

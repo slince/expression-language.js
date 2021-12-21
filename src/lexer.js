@@ -1,5 +1,5 @@
 import Position from "./position.js";
-import {Token, TokenStream, TokenType} from "./token.js";
+import {Token, Tokens, TokenStream, TokenType} from "./token.js";
 import Utils from "./utils.js"
 import SyntaxError from "./errors.js";
 
@@ -160,7 +160,7 @@ class Lexer{
                     throw new SyntaxError(`Unrecognized punctuation ${ch}`, this.position());
             }
             this.offset ++;
-            token = new Token(type, null, this.position());
+            token = new Token(type, Tokens[type], this.position());
             tokens.add(token);
         }
         this.offset ++;

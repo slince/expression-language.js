@@ -1,13 +1,15 @@
-import {Tokens, TokenType} from "./token";
-import Identifier from "./ast/identifier";
-import FunctionCallExpression from "./ast/expr/function_call";
-import PropertyAccessExpression from "./ast/expr/property_access";
-import ArrayExpression from "./ast/expr/array";
-import LiteralExpression from "./ast/expr/literal";
-import AssignStatement from "./ast/stmt/assign";
-import {MapExpression} from "./ast/expr/map";
-import SyntaxError from "./errors";
-import BinaryExpression from "./ast/expr/binary";
+import {Token, Tokens, TokenType} from "./token.js";
+import Identifier from "./ast/identifier.js";
+import FunctionCallExpression from "./ast/expr/function_call.js";
+import PropertyAccessExpression from "./ast/expr/property_access.js";
+import ArrayExpression from "./ast/expr/array.js";
+import LiteralExpression from "./ast/expr/literal.js";
+import AssignStatement from "./ast/stmt/assign.js";
+import {MapExpression} from "./ast/expr/map.js";
+import SyntaxError from "./errors.js";
+import BinaryExpression from "./ast/expr/binary.js";
+import ExpressionStatement from "./ast/stmt/expr.js";
+import MethodCallExpression from "./ast/expr/method_call.js";
 
 const OPERATOR_LEFT = 1;
 const OPERATOR_RIGHT = 2;
@@ -43,15 +45,46 @@ class Parser{
         this.tokens = tokens;
     }
 
-    parse(context){
-        const token = this.tokens.current();
-        while (token.test(TokenType)) {
-
+    parse(){
+        const stmts = [];
+        while (!this.tokens.eof()) {
+            stmts.push(this.parseStatement());
         }
+        return stmts;
+    }
+
+    parseStatement(){
+        const token = this.tokens.current();
+        let node;
+        if (token.test(TokenType.T_ID) && this.tokens.look().test(TokenType.T_ASSIGN)) {
+            node = this.parseAssignStatement();
+        } else {
+            node = new ExpressionStatement(this.parseExpression(), token.position);
+        }
+        return node;
+    }
+
+    parseAssignStatement(){
+        const token = this.tokens.current();
+        const variable = new LiteralExpression(token.value, token.value, token.position);
+        return new AssignStatement(variable, this.parseExpression(), token.lineno);
     }
 
     parseExpression(){
-        return this.parsePrimaryExpression();
+        let expr = this.parsePrimaryExpression();
+        const token = this.tokens.current();
+        if (token.test(TokenType.T_LPAREN)) {
+            expr = new FunctionCallExpression(expr, this.parseArguments(), token.position);
+        } else if (token.test(TokenType.T_DOT)) {
+            expr = this.parseObjectExpression(token, expr);
+        } else if (token.test(TokenType.T_SEMICOLON)) {
+            this.tokens.next(); // skip ";"
+        } else if (this.isOperatorToken()) {
+            expr = this.parseBinaryExpression(0, expr);
+        } else {
+            throw new SyntaxError(`Unexpected token "${token.type}" of value "${token.value}".`);
+        }
+        return expr;
     }
 
     parsePrimaryExpression(){
@@ -68,7 +101,7 @@ class Parser{
                 node = this.parseIdentifierExpression();
                 break;
             // punctuation
-            case TokenType.T_LPAREN:
+            case TokenType.T_LBRACKET:
                 node = this.parseArrayExpression(token);
                 break;
             case TokenType.T_LBRACE:
@@ -83,41 +116,37 @@ class Parser{
 
     parseIdentifierExpression(){
         const token = this.tokens.current();
-        let node;
+        let expr;
         this.tokens.next();
         switch (token.value) {
             case 'true':
             case 'TRUE':
-                node = new LiteralExpression(true, token.value, token.position);
+                expr = new LiteralExpression(true, token.value, token.position);
                 break;
             case 'false':
             case 'FALSE':
-                node = new LiteralExpression(false, token.value, token.position);
+                expr = new LiteralExpression(false, token.value, token.position);
                 break;
             case 'null':
             case 'NULL':
-                node = new LiteralExpression(null, token.value, token.position);
+                expr = new LiteralExpression(null, token.value, token.position);
                 break;
             default:
-                const identifier = new Identifier(token.value, token.position);
-                const next = this.tokens.current();
-                if (next.test(TokenType.T_ASSIGN)) {     // fruit = 'apple';
-                    node = new AssignStatement(identifier, this.parseExpression(), token.position);
-                } else if (next.test(TokenType.T_LPAREN)) {  // sell_fruit(fruit, 'bob')
-                    node = new FunctionCallExpression(identifier, this.parseArguments(), token.position);
-                } else if (next.test(TokenType.T_DOT)) {     // fruit.name
-                    node = new PropertyAccessExpression(identifier, this.parseExpression(), token.position);
-                } else if (typeof binaryOperators[Tokens[next.type]] !== 'undefined') {
-                    // a + b / c * d
-                    // a + b + c + d
-                    while (typeof binaryOperators[Tokens[this.tokens.current().type]] !== 'undefined') {
-                        const current = this.tokens.current();
-                        this.tokens.next();
-                        const expr = new BinaryExpression(identifier, Tokens[current.type], this.parseExpression());
-                    }
-                }
+                expr = new Identifier(token.value, token.position);
         }
-        return node;
+        return expr;
+    }
+
+    parseObjectExpression(token, object){
+        this.tokens.expect(TokenType.T_DOT);
+        const member = this.tokens.expect(TokenType.T_ID);
+        let expr;
+        if (this.tokens.current().test(TokenType.T_LPAREN)) { // object method
+            expr = new MethodCallExpression(object, member, this.parseArguments(), token.position);
+        } else {
+            expr = new PropertyAccessExpression(object, member, token.position);
+        }
+        return expr;
     }
 
     parseBinaryExpression(precedence, left){
@@ -125,20 +154,24 @@ class Parser{
         // a * b + c
         while (typeof binaryOperators[Tokens[this.tokens.current().type]] !== 'undefined') {
             const operator = Tokens[this.tokens.current().type];
-            const currentPrecedence = this.currentTokenPrecedence();
-            if (currentPrecedence < precedence) {
+            const tokenPrecedence = this.currentTokenPrecedence();
+            if (tokenPrecedence < precedence) {
                 break;
             }
             this.tokens.next();
             let right = this.parsePrimaryExpression();
 
             const nextPrecedence = this.currentTokenPrecedence();
-            if (currentPrecedence < nextPrecedence) {
-                right = this.parseBinaryExpression(currentPrecedence, right);
+            if (tokenPrecedence < nextPrecedence) {
+                right = this.parseBinaryExpression(tokenPrecedence, right);
             }
             left = new BinaryExpression(left, operator, right);
         }
         return left;
+    }
+
+    isOperatorToken(){
+        return typeof binaryOperators[Tokens[this.tokens.current().type]] !== 'undefined';
     }
 
     currentTokenPrecedence(){
@@ -150,31 +183,31 @@ class Parser{
     }
 
     parseArrayExpression(token){
-        const node = new ArrayExpression([], token.position);
+        const expr = new ArrayExpression([], token.position);
         while (!this.tokens.current().test(TokenType.T_RBRACKET)) {
-            if (!node.isEmpty()) {
+            if (!expr.isEmpty()) {
                 this.tokens.expect(TokenType.T_COMMA, null, 'An array element must be followed by a comma');
             }
-            node.addElement(this.parseExpression());
+            expr.addElement(this.parseExpression());
         }
         this.tokens.expect(TokenType.T_RBRACKET, null, 'An array element must be closed by a brackets');
-        return node;
+        return expr;
     }
 
     parseMapExpression(token){
         this.tokens.expect(TokenType.T_LBRACE, null, 'A map must begin with an opening braces');
-        const node = new MapExpression([], token.position);
+        const expr = new MapExpression([], token.position);
         while (!this.tokens.current().test(TokenType.T_RBRACE)) {
-            if (!node.isEmpty()) {
+            if (!expr.isEmpty()) {
                 this.tokens.expect(TokenType.T_COMMA, null, 'A map must be followed by a comma');
             }
             const key = this.tokens.expect(TokenType.T_STR, null, 'A map key must be a string');
             this.tokens.expect(TokenType.T_COLON, null, 'The map key and value must be separated by a colon(:)');
             const value = this.parseExpression();
-            node.addElement(new LiteralExpression(key.value, key.value, key.position), value);
+            expr.addElement(new LiteralExpression(key.value, key.value, key.position), value);
         }
         this.tokens.expect(TokenType.T_RBRACE, null, 'A map must be closed by a braces');
-        return node;
+        return expr;
     }
 
     parseArguments(){

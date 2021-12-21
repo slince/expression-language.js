@@ -1,5 +1,4 @@
-import Expr from "../expr";
-import FunctionCallExpression from "./function_call";
+import Expr from "../expr.js";
 
 class MethodCallExpression extends Expr{
     constructor(object, method, _arguments, lineno) {
