@@ -46,11 +46,11 @@ class Parser{
     }
 
     parse(){
-        const stmts = [];
+        this.stmts = [];
         while (!this.tokens.eof()) {
-            stmts.push(this.parseStatement());
+            this.stmts.push(this.parseStatement());
         }
-        return stmts;
+        return this.stmts;
     }
 
     parseStatement(){
@@ -72,17 +72,27 @@ class Parser{
 
     parseExpression(){
         let expr = this.parsePrimaryExpression();
-        const token = this.tokens.current();
-        if (token.test(TokenType.T_LPAREN)) {
-            expr = new FunctionCallExpression(expr, this.parseArguments(), token.position);
-        } else if (token.test(TokenType.T_DOT)) {
-            expr = this.parseObjectExpression(token, expr);
-        } else if (token.test(TokenType.T_SEMICOLON)) {
-            this.tokens.next(); // skip ";"
-        } else if (this.isOperatorToken()) {
-            expr = this.parseBinaryExpression(0, expr);
-        } else {
-            throw new SyntaxError(`Unexpected token "${token.type}" of value "${token.value}".`);
+        expr = this.doParseExpression(expr);
+        return expr;
+    }
+
+    doParseExpression(expr){
+        while (!this.tokens.current().test(TokenType.T_SEMICOLON)) {
+            const token = this.tokens.current();
+            if (token.value === '==') {
+                console.log(expr, this.tokens.index, this.isOperatorToken());
+            }
+            if (token.test(TokenType.T_LPAREN)) {
+                expr = new FunctionCallExpression(expr, this.parseArguments(), token.position);
+                this.tokens.next();
+            } else if (token.test(TokenType.T_DOT)) {
+                expr = this.parseObjectExpression(token, expr);
+            } else if (this.isOperatorToken()) {
+                expr = this.parseBinaryExpression(0, expr);
+            } else {
+                // console.log(expr, this.tokens.current());
+                throw new SyntaxError(`Unexpected token "${token.type}" of value "${token.value}".`);
+            }
         }
         return expr;
     }
@@ -95,6 +105,7 @@ class Parser{
             case TokenType.T_STR:
             case TokenType.T_NUM:
                 node = new LiteralExpression(token.value, token.value, token.position);
+                this.tokens.next();
                 break;
             // identifier
             case TokenType.T_ID:
@@ -117,7 +128,6 @@ class Parser{
     parseIdentifierExpression(){
         const token = this.tokens.current();
         let expr;
-        this.tokens.next();
         switch (token.value) {
             case 'true':
             case 'TRUE':
@@ -134,6 +144,7 @@ class Parser{
             default:
                 expr = new Identifier(token.value, token.position);
         }
+        this.tokens.next();
         return expr;
     }
 
@@ -152,6 +163,7 @@ class Parser{
     parseBinaryExpression(precedence, left){
         // a + b * c / d
         // a * b + c
+        console.log(left);
         while (typeof binaryOperators[Tokens[this.tokens.current().type]] !== 'undefined') {
             const operator = Tokens[this.tokens.current().type];
             const tokenPrecedence = this.currentTokenPrecedence();
@@ -159,8 +171,8 @@ class Parser{
                 break;
             }
             this.tokens.next();
-            let right = this.parsePrimaryExpression();
-
+            let right = this.parseExpression();
+            // console.log(this.tokens.index, right);
             const nextPrecedence = this.currentTokenPrecedence();
             if (tokenPrecedence < nextPrecedence) {
                 right = this.parseBinaryExpression(tokenPrecedence, right);
