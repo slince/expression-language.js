@@ -1,10 +1,10 @@
 import Stmt from "../stmt.js";
 
 class BlockStatement extends Stmt{
-    constructor(body, lineno) {
+    constructor(stmts, lineno) {
         super(null, lineno);
         this.type = 'BlockStatement';
-        this.body = body;
+        this.stmts = stmts;
     }
 }
 

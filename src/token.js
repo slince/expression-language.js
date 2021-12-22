@@ -109,10 +109,11 @@ class TokenStream{
         return this.tokens[this.index + 1];
     }
 
-    expect(type, value,  message) {
+    expect(type, value, message) {
         let token = this.current();
+        value = value || Tokens[type];
         if (!token.test(type, value)) {
-            const message = `${message ? message+'. ' : ''}Unexpected token "${token.type}" of value "${token.value}" ("${type}" expected ${value ? 'with value ' + value : ''}}).`;
+            message = `${message ? message+'. ' : ''}Unexpected token "${token.type}" of value "${token.value}" ("${type}" expected ${value ? 'with value ' + value : ''}).`;
             throw new SyntaxError(message, token.position);
         }
         this.next();

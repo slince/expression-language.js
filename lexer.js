@@ -2,7 +2,9 @@ import Lexer from "./src/lexer.js";
 import Parser from "./src/parser.js";
 
 const code = `
-fruit.name == 'apple' && sell(fruit2, 5, "bob") && false
+
+fruit.name == 'apple' && sell(fruit2, 5, "bob") && false;
+
 `;
 
 const lexer = new Lexer(code);

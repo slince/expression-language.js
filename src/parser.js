@@ -46,22 +46,27 @@ class Parser{
     }
 
     parse(){
-        this.stmts = [];
+        return this.parseBlock();
+    }
+
+    parseBlock(){
+        const stmts = [];
         while (!this.tokens.eof()) {
-            this.stmts.push(this.parseStatement());
+            stmts.push(this.parseStatement());
         }
-        return this.stmts;
+        return stmts;
     }
 
     parseStatement(){
         const token = this.tokens.current();
-        let node;
+        let stmt;
         if (token.test(TokenType.T_ID) && this.tokens.look().test(TokenType.T_ASSIGN)) {
-            node = this.parseAssignStatement();
+            stmt = this.parseAssignStatement();
         } else {
-            node = new ExpressionStatement(this.parseExpression(), token.position);
+            stmt = new ExpressionStatement(this.parseExpression(), token.position);
         }
-        return node;
+        this.tokens.expect(TokenType.T_SEMICOLON);
+        return stmt;
     }
 
     parseAssignStatement(){
