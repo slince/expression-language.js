@@ -10,6 +10,7 @@ import SyntaxError from "./errors.js";
 import BinaryExpression from "./ast/expr/binary.js";
 import ExpressionStatement from "./ast/stmt/expr.js";
 import MethodCallExpression from "./ast/expr/method_call.js";
+import BlockStatement from "./ast/stmt/block.js";
 
 const OPERATOR_LEFT = 1;
 const OPERATOR_RIGHT = 2;
@@ -46,15 +47,12 @@ class Parser{
     }
 
     parse(){
-        return this.parseBlock();
-    }
-
-    parseBlock(){
+        const token = this.tokens.current();
         const stmts = [];
         while (!this.tokens.eof()) {
             stmts.push(this.parseStatement());
         }
-        return stmts;
+        return new BlockStatement(stmts, token.position);
     }
 
     parseStatement(){
@@ -62,11 +60,26 @@ class Parser{
         let stmt;
         if (token.test(TokenType.T_ID) && this.tokens.look().test(TokenType.T_ASSIGN)) {
             stmt = this.parseAssignStatement();
+        } else if (token.test(TokenType.T_LBRACE) && !this.tokens.look().test(TokenType.T_RBRACE) && !this.tokens.look(2).test(TokenType.T_COLON)) {
+            stmt = this.parseBlockStatement();
         } else {
             stmt = new ExpressionStatement(this.parseExpression(), token.position);
         }
-        this.tokens.expect(TokenType.T_SEMICOLON);
+        if (!this.tokens.current().test(TokenType.T_EOF)) {
+            this.tokens.expect(TokenType.T_SEMICOLON);
+        }
         return stmt;
+    }
+
+    parseBlockStatement(){
+        this.tokens.expect(TokenType.T_LBRACE, 'A block must begin with an opening braces');
+        const token = this.tokens.current();
+        const stmts = [];
+        while (!this.tokens.current().test(TokenType.T_RBRACE)) {
+            stmts.push(this.parseStatement());
+        }
+        this.tokens.expect(TokenType.T_RBRACE, 'A block must be closed by a braces');
+        return new BlockStatement(stmts, token.position);
     }
 
     parseAssignStatement(){
@@ -198,41 +211,41 @@ class Parser{
         const expr = new ArrayExpression([], token.position);
         while (!this.tokens.current().test(TokenType.T_RBRACKET)) {
             if (!expr.isEmpty()) {
-                this.tokens.expect(TokenType.T_COMMA, null, 'An array element must be followed by a comma');
+                this.tokens.expect(TokenType.T_COMMA, 'An array element must be followed by a comma');
             }
             expr.addElement(this.parseExpression());
         }
-        this.tokens.expect(TokenType.T_RBRACKET, null, 'An array element must be closed by a brackets');
+        this.tokens.expect(TokenType.T_RBRACKET, 'An array element must be closed by a brackets');
         return expr;
     }
 
     parseMapExpression(token){
-        this.tokens.expect(TokenType.T_LBRACE, null, 'A map must begin with an opening braces');
+        this.tokens.expect(TokenType.T_LBRACE, 'A map must begin with an opening braces');
         const expr = new MapExpression([], token.position);
         while (!this.tokens.current().test(TokenType.T_RBRACE)) {
             if (!expr.isEmpty()) {
-                this.tokens.expect(TokenType.T_COMMA, null, 'A map must be followed by a comma');
+                this.tokens.expect(TokenType.T_COMMA, 'A map must be followed by a comma');
             }
-            const key = this.tokens.expect(TokenType.T_STR, null, 'A map key must be a string');
-            this.tokens.expect(TokenType.T_COLON, null, 'The map key and value must be separated by a colon(:)');
+            const key = this.tokens.expect(TokenType.T_STR, 'A map key must be a string');
+            this.tokens.expect(TokenType.T_COLON, 'The map key and value must be separated by a colon(:)');
             const value = this.parseExpression();
             expr.addElement(new LiteralExpression(key.value, key.value, key.position), value);
         }
-        this.tokens.expect(TokenType.T_RBRACE, null, 'A map must be closed by a braces');
+        this.tokens.expect(TokenType.T_RBRACE, 'A map must be closed by a braces');
         return expr;
     }
 
     parseArguments(){
         // the_foo_func(1, "foo")
         const args = [];
-        this.tokens.expect(TokenType.T_LPAREN, null, 'A list of arguments must begin with an opening parenthesis');
+        this.tokens.expect(TokenType.T_LPAREN, 'A list of arguments must begin with an opening parenthesis');
         while (!this.tokens.current().test(TokenType.T_RPAREN)) {
             if (args.length > 0) { // the prev arguments is exists.
-                this.tokens.expect(TokenType.T_COMMA, null, 'Arguments must be separated by a comma');
+                this.tokens.expect(TokenType.T_COMMA, 'Arguments must be separated by a comma');
             }
             args.push(this.parseExpression());
         }
-        this.tokens.expect(TokenType.T_RPAREN, null, 'A list of arguments must be closed by a parenthesis');
+        this.tokens.expect(TokenType.T_RPAREN, 'A list of arguments must be closed by a parenthesis');
         return args;
     }
 }
