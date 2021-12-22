@@ -9,7 +9,8 @@ fruit.name == 'apple' && sell(fruit2, 5, "bob") && false;
 
 const lexer = new Lexer(code);
 const tokens = lexer.lex();
-
+console.log(tokens);
+// process.exit();
 const parser = new Parser(tokens);
 const stmts = parser.parse();
 // console.log(tokens, stmts);

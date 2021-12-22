@@ -49,123 +49,126 @@ class Lexer{
                 tokens.add(token);
                 continue;
             }
-
             // punctuation
-            let type, next;
-            switch (ch) {
-                case '=':
-                    type = TokenType.T_ASSIGN;
-                    next = this.look();
-                    if (next === '=') {
-                        type = TokenType.T_EQ;
-                        this.offset ++;
-                    }
-                    break;
-
-                case '!':
-                    type = TokenType.T_NOT;
-                    next = this.look();
-                    if (next === '=') {
-                        type = TokenType.T_NEQ;
-                        this.offset ++;
-                    }
-                    break;
-                case '<':
-                    type = TokenType.T_LT;
-                    next = this.look();
-                    if (next === '=') {
-                        type = TokenType.T_LE;
-                        this.offset ++;
-                    }
-                    break;
-                case '>':
-                    type = TokenType.T_GT;
-                    next = this.look();
-                    if (next === '=') {
-                        type = TokenType.T_GE;
-                        this.offset ++;
-                    }
-                    break;
-                case '&':
-                    type = TokenType.T_LEA;
-                    next = this.look();
-                    if (next === '&') {
-                        type = TokenType.T_AND;
-                        this.offset ++;
-                    }
-                    break;
-
-                case '+':
-                    type = TokenType.T_ADD;
-                    next = this.look();
-                    if (next === '+') {
-                        type = TokenType.T_INC;
-                        this.offset ++;
-                    }
-                    break;
-                case '-':
-                    type = TokenType.T_SUB;
-                    next = this.look();
-                    if (next === '-') {
-                        type = TokenType.T_DEC;
-                        this.offset ++;
-                    }
-                    break;
-                case '*':
-                    type = TokenType.T_MUL;
-                    break;
-                case '/':
-                    type = TokenType.T_DIV;
-                    break;
-                case '%':
-                    type = TokenType.T_MOD;
-                    break;
-
-                case '(':
-                    type = TokenType.T_LPAREN;
-                    break;
-                case '[':
-                    type = TokenType.T_LBRACKET;
-                    break;
-                case '{':
-                    type = TokenType.T_LBRACE;
-                    break;
-
-                case ')':
-                    type = TokenType.T_RPAREN;
-                    break;
-                case ']':
-                    type = TokenType.T_RBRACKET;
-                    break;
-                case '}':
-                    type = TokenType.T_RBRACE;
-                    break;
-
-                case ',':
-                    type = TokenType.T_COMMA;
-                    break;
-                case ':':
-                    type = TokenType.T_COLON;
-                    break;
-                case ';':
-                    type = TokenType.T_SEMICOLON;
-                    break;
-                case '.':
-                    type = TokenType.T_DOT;
-                    break;
-                case '?':
-                    type = TokenType.T_QUESTION_MARK;
-                    break;
-                default:
-                    throw new SyntaxError(`Unrecognized punctuation ${ch}`, this.position());
-            }
-            this.offset ++;
-            token = new Token(type, Tokens[type], this.position());
+            token = this.lexPunctuation(ch);
             tokens.add(token);
         }
         this.offset ++;
         tokens.add(new Token(TokenType.T_EOF, Tokens[TokenType.T_EOF], this.position()));
         return tokens;
+    }
+
+    lexPunctuation(ch){
+        let type, next;
+        switch (ch) {
+            case '=':
+                type = TokenType.T_ASSIGN;
+                next = this.look();
+                if (next === '=') {
+                    type = TokenType.T_EQ;
+                    this.offset ++;
+                }
+                break;
+
+            case '!':
+                type = TokenType.T_NOT;
+                next = this.look();
+                if (next === '=') {
+                    type = TokenType.T_NEQ;
+                    this.offset ++;
+                }
+                break;
+            case '<':
+                type = TokenType.T_LT;
+                next = this.look();
+                if (next === '=') {
+                    type = TokenType.T_LE;
+                    this.offset ++;
+                }
+                break;
+            case '>':
+                type = TokenType.T_GT;
+                next = this.look();
+                if (next === '=') {
+                    type = TokenType.T_GE;
+                    this.offset ++;
+                }
+                break;
+            case '&':
+                type = TokenType.T_LEA;
+                next = this.look();
+                if (next === '&') {
+                    type = TokenType.T_AND;
+                    this.offset ++;
+                }
+                break;
+
+            case '+':
+                type = TokenType.T_ADD;
+                next = this.look();
+                if (next === '+') {
+                    type = TokenType.T_INC;
+                    this.offset ++;
+                }
+                break;
+            case '-':
+                type = TokenType.T_SUB;
+                next = this.look();
+                if (next === '-') {
+                    type = TokenType.T_DEC;
+                    this.offset ++;
+                }
+                break;
+            case '*':
+                type = TokenType.T_MUL;
+                break;
+            case '/':
+                type = TokenType.T_DIV;
+                break;
+            case '%':
+                type = TokenType.T_MOD;
+                break;
+
+            case '(':
+                type = TokenType.T_LPAREN;
+                break;
+            case '[':
+                type = TokenType.T_LBRACKET;
+                break;
+            case '{':
+                type = TokenType.T_LBRACE;
+                break;
+
+            case ')':
+                type = TokenType.T_RPAREN;
+                break;
+            case ']':
+                type = TokenType.T_RBRACKET;
+                break;
+            case '}':
+                type = TokenType.T_RBRACE;
+                break;
+
+            case ',':
+                type = TokenType.T_COMMA;
+                break;
+            case ':':
+                type = TokenType.T_COLON;
+                break;
+            case ';':
+                type = TokenType.T_SEMICOLON;
+                break;
+            case '.':
+                type = TokenType.T_DOT;
+                break;
+            case '?':
+                type = TokenType.T_QUESTION_MARK;
+                break;
+            default:
+                throw new SyntaxError(`Unrecognized punctuation ${ch}`, this.position());
+        }
+        this.offset ++;
+        return new Token(type, Tokens[type], this.position());
     }
 
     readNumber(){
