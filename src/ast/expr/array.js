@@ -3,6 +3,7 @@ import Expr from "../expr.js";
 class ArrayExpression extends Expr{
     constructor(elements, lineno) {
         super(null, lineno);
+        this.type = 'ArrayExpression';
         this.elements = elements || [];
     }
 

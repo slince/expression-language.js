@@ -72,57 +72,52 @@ class Parser{
 
     parseExpression(){
         let expr = this.parsePrimaryExpression();
-        expr = this.doParseExpression(expr);
-        return expr;
-    }
-
-    doParseExpression(expr){
-        while (!this.tokens.current().test(TokenType.T_SEMICOLON)) {
-            const token = this.tokens.current();
-            if (token.value === '==') {
-                console.log(expr, this.tokens.index, this.isOperatorToken());
-            }
-            if (token.test(TokenType.T_LPAREN)) {
-                expr = new FunctionCallExpression(expr, this.parseArguments(), token.position);
-                this.tokens.next();
-            } else if (token.test(TokenType.T_DOT)) {
-                expr = this.parseObjectExpression(token, expr);
-            } else if (this.isOperatorToken()) {
-                expr = this.parseBinaryExpression(0, expr);
-            } else {
-                // console.log(expr, this.tokens.current());
-                throw new SyntaxError(`Unexpected token "${token.type}" of value "${token.value}".`);
-            }
+        while (this.isOperatorToken()) {
+            expr = this.parseBinaryExpression(0, expr);
         }
         return expr;
     }
 
     parsePrimaryExpression(){
         const token = this.tokens.current();
-        let node;
+        let expr;
         switch (token.type) {
             // constant
             case TokenType.T_STR:
             case TokenType.T_NUM:
-                node = new LiteralExpression(token.value, token.value, token.position);
+                expr = new LiteralExpression(token.value, token.value, token.position);
                 this.tokens.next();
                 break;
             // identifier
             case TokenType.T_ID:
-                node = this.parseIdentifierExpression();
+                expr = this.parseIdentifierExpression();
                 break;
             // punctuation
             case TokenType.T_LBRACKET:
-                node = this.parseArrayExpression(token);
+                expr = this.parseArrayExpression(token);
                 break;
             case TokenType.T_LBRACE:
-                node = this.parseMapExpression(token);
+                expr = this.parseMapExpression(token);
                 break;
             default:
                 throw new SyntaxError(`Unexpected token "${token.type}" of value "${token.value}".`);
         }
+        expr = this.parsePosixExpression(expr);
+        return expr;
+    }
 
-        return node;
+    parsePosixExpression(expr){
+        while (true) {
+            const token = this.tokens.current();
+            if (token.test(TokenType.T_LPAREN)) {
+                expr = new FunctionCallExpression(expr, this.parseArguments(), token.position);
+            } else if (token.test(TokenType.T_DOT)) {
+                expr = this.parseObjectExpression(token, expr);
+            } else {
+                break;
+            }
+        }
+        return expr;
     }
 
     parseIdentifierExpression(){
@@ -163,21 +158,21 @@ class Parser{
     parseBinaryExpression(precedence, left){
         // a + b * c / d
         // a * b + c
-        console.log(left);
-        while (typeof binaryOperators[Tokens[this.tokens.current().type]] !== 'undefined') {
+        while (this.isOperatorToken()) {
             const operator = Tokens[this.tokens.current().type];
             const tokenPrecedence = this.currentTokenPrecedence();
             if (tokenPrecedence < precedence) {
                 break;
             }
             this.tokens.next();
-            let right = this.parseExpression();
-            // console.log(this.tokens.index, right);
+            let right = this.parsePrimaryExpression();
             const nextPrecedence = this.currentTokenPrecedence();
             if (tokenPrecedence < nextPrecedence) {
                 right = this.parseBinaryExpression(tokenPrecedence, right);
             }
+
             left = new BinaryExpression(left, operator, right);
+            precedence = tokenPrecedence;
         }
         return left;
     }

@@ -164,7 +164,7 @@ class Lexer{
             tokens.add(token);
         }
         this.offset ++;
-        tokens.add(new Token(TokenType.T_EOF, null, this.position()));
+        tokens.add(new Token(TokenType.T_EOF, Tokens[TokenType.T_EOF], this.position()));
         return tokens;
     }
 

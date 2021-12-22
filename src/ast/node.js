@@ -1,7 +1,7 @@
 
 class Node{
     constructor(nodes, lineno) {
-        this.nodes = nodes;
+        this.type = 'Node';
         this.lineno = lineno;
     }
 }

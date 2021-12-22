@@ -10,6 +10,7 @@ class MapEntry{
 class MapExpression extends Expr{
     constructor(entries, lineno) {
         super(null, lineno);
+        this.type = 'MapExpression';
         this.entries = entries || [];
     }
 

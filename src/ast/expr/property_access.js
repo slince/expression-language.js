@@ -1,9 +1,9 @@
 import Expr from "../expr.js";
 
-class PropertyAccessExpression extends Expr
-{
+class PropertyAccessExpression extends Expr{
     constructor(object, property, lineno) {
         super(null, lineno);
+        this.type = 'PropertyAccessExpression';
         this.object = object;
         this.property = property;
     }
