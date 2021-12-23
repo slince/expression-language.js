@@ -1,5 +1,5 @@
 import Expr from "../expr.js";
-import {RuntimeError} from "../../errors";
+import {RuntimeError} from "../../errors.js";
 
 class FunctionCallExpression extends Expr{
     constructor(callee, _arguments, lineno) {
@@ -15,7 +15,7 @@ class FunctionCallExpression extends Expr{
             throw new RuntimeError(`Undefined function ${callee}`, this.callee.position);
         }
         const args = this.arguments.map(arg => arg.evaluate(context))
-        return context.getFunction(callee)(arguments);
+        return context.getFunction(callee)(args);
     }
 }
 

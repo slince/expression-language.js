@@ -6,7 +6,7 @@ import ArrayExpression from "./ast/expr/array.js";
 import LiteralExpression from "./ast/expr/literal.js";
 import AssignStatement from "./ast/stmt/assign.js";
 import {MapExpression} from "./ast/expr/map.js";
-import SyntaxError from "./errors.js";
+import {SyntaxError} from "./errors.js";
 import BinaryExpression from "./ast/expr/binary.js";
 import ExpressionStatement from "./ast/stmt/expr.js";
 import MethodCallExpression from "./ast/expr/method_call.js";

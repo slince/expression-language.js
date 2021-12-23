@@ -1,4 +1,4 @@
-import SyntaxError from "./errors.js";
+import {SyntaxError} from "./errors.js";
 
 // token type enum
 const TokenType = {

@@ -7,6 +7,10 @@ class LiteralExpression extends Expr{
         this.value = value;
         this.raw = raw;
     }
+
+    evaluate(context) {
+        return this.value;
+    }
 }
 
 export default LiteralExpression;

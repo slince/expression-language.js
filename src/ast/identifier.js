@@ -1,10 +1,14 @@
 import Node from "./node.js";
 
 class Identifier extends Node{
-    constructor(name, lineno) {
+    constructor(value, lineno) {
         super(null, lineno);
         this.type = 'Identifier';
-        this.name = name;
+        this.value = value;
+    }
+
+    evaluate(context) {
+        return this.value;
     }
 }
 

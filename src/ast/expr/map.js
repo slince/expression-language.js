@@ -21,6 +21,14 @@ class MapExpression extends Expr{
     isEmpty(){
         return this.entries.length === 0;
     }
+
+    evaluate(context) {
+        const result = {};
+        this.entries.forEach(entry => {
+           result[entry.key.evaluate(context)] = entry.value.evaluate(context)
+        });
+        return result;
+    }
 }
 
 export {MapEntry, MapExpression};

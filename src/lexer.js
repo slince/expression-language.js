@@ -1,7 +1,7 @@
 import Position from "./position.js";
 import {Token, Tokens, TokenStream, TokenType} from "./token.js";
 import Utils from "./utils.js"
-import SyntaxError from "./errors.js";
+import {SyntaxError} from "./errors.js";
 
 class Lexer{
 
