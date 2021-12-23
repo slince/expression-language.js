@@ -25,35 +25,22 @@ class Lexer{
             const ch = this.current();
             // skip blank char.
             if (ch === ' ' || ch === "\n") {
-                this.offset ++;
+                this.next();
                 continue;
             }
-
             // the number.
             if (Utils.isDigit(ch)) {
                 token = new Token(TokenType.T_NUM, this.readNumber(), this.position());
-                tokens.add(token);
-                continue;
-            }
-
-            // string.
-            if (ch === '\'' || ch === '\"') {
+            } else if (ch === '\'' || ch === '\"') {  // string.
                 token = new Token(TokenType.T_STR, this.readString(ch), this.position());
-                tokens.add(token);
-                continue;
-            }
-
-            // the id.
-            if (Utils.isIdentifierBegin(ch)) {
+            } else if (Utils.isIdentifierBegin(ch)) {   // the id.
                 token = new Token(TokenType.T_ID, this.readIdentifier(ch), this.position());
-                tokens.add(token);
-                continue;
+            } else {
+                token = this.lexPunctuation(ch);
             }
-            // punctuation
-            token = this.lexPunctuation(ch);
             tokens.add(token);
         }
-        this.offset ++;
+        this.next();
         tokens.add(new Token(TokenType.T_EOF, Tokens[TokenType.T_EOF], this.position()));
         return tokens;
     }
@@ -66,7 +53,7 @@ class Lexer{
                 next = this.look();
                 if (next === '=') {
                     type = TokenType.T_EQ;
-                    this.offset ++;
+                    this.next();
                 }
                 break;
 
@@ -75,7 +62,7 @@ class Lexer{
                 next = this.look();
                 if (next === '=') {
                     type = TokenType.T_NEQ;
-                    this.offset ++;
+                    this.next();
                 }
                 break;
             case '<':
@@ -83,7 +70,7 @@ class Lexer{
                 next = this.look();
                 if (next === '=') {
                     type = TokenType.T_LE;
-                    this.offset ++;
+                    this.next();
                 }
                 break;
             case '>':
@@ -91,7 +78,7 @@ class Lexer{
                 next = this.look();
                 if (next === '=') {
                     type = TokenType.T_GE;
-                    this.offset ++;
+                    this.next();
                 }
                 break;
             case '&':
@@ -99,7 +86,7 @@ class Lexer{
                 next = this.look();
                 if (next === '&') {
                     type = TokenType.T_AND;
-                    this.offset ++;
+                    this.next();
                 }
                 break;
 
@@ -108,7 +95,7 @@ class Lexer{
                 next = this.look();
                 if (next === '+') {
                     type = TokenType.T_INC;
-                    this.offset ++;
+                    this.next();
                 }
                 break;
             case '-':
@@ -116,7 +103,7 @@ class Lexer{
                 next = this.look();
                 if (next === '-') {
                     type = TokenType.T_DEC;
-                    this.offset ++;
+                    this.next();
                 }
                 break;
             case '*':
@@ -167,7 +154,7 @@ class Lexer{
             default:
                 throw new SyntaxError(`Unrecognized punctuation ${ch}`, this.position());
         }
-        this.offset ++;
+        this.next();
         return new Token(type, Tokens[type], this.position());
     }
 
@@ -186,11 +173,11 @@ class Lexer{
     }
 
     readString(beginChar){
-        this.offset ++; // skip first ' or "
+        this.next(); // skip first ' or "
         const buffer = this.readIf((ch)=>{
             return ch !== beginChar;
         });
-        this.offset ++; // skip last ' or "
+        this.next(); // skip last ' or "
         return buffer;
     }
 

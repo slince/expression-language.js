@@ -14,6 +14,10 @@ class ArrayExpression extends Expr{
     isEmpty(){
         return this.elements.length === 0;
     }
+
+    evaluate(context) {
+        return this.elements.map(element => element.evaluate(context));
+    }
 }
 
 export default ArrayExpression;

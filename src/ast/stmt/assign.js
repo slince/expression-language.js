@@ -7,6 +7,10 @@ class AssignStatement extends Stmt{
         this.variable = variable;
         this.value = value;
     }
+
+    evaluate(context) {
+
+    }
 }
 
 export default AssignStatement;

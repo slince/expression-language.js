@@ -1,8 +1,12 @@
 
 class Node{
-    constructor(nodes, lineno) {
+    constructor(nodes, position) {
         this.type = 'Node';
-        this.lineno = lineno;
+        this.position = position;
+    }
+
+    evaluate(context){
+
     }
 }
 

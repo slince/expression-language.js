@@ -1,4 +1,4 @@
-import {Token, Tokens, TokenType} from "./token.js";
+import {TokenType} from "./token.js";
 import Identifier from "./ast/identifier.js";
 import FunctionCallExpression from "./ast/expr/function_call.js";
 import PropertyAccessExpression from "./ast/expr/property_access.js";

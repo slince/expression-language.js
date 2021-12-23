@@ -6,4 +6,11 @@ class SyntaxError extends Error{
     }
 }
 
-export default SyntaxError;
+class RuntimeError extends Error{
+    constructor(message, position) {
+        super(message);
+        this.position = position;
+    }
+}
+
+export {SyntaxError, RuntimeError};
