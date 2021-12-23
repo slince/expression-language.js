@@ -1,13 +1,19 @@
 {
-  "name": "expression-language",
+  "name": "expression.js",
   "version": "1.0.0",
   "description": "An engine that can compile and evaluate expressions written in javascript",
   "main": "index.js",
   "type": "module",
+  "author": "slince",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["lexer", "parser", "ast", "expression-language"],
-  "author": "slince",
+  "keywords": [
+    "lexer",
+    "parser",
+    "ast",
+    "expression",
+    "expression-language"
+  ],
   "license": "MIT"
 }

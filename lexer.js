@@ -3,9 +3,11 @@ import Parser from "./src/parser.js";
 
 const code = `
 
-   fruit.name == 'apple' && sell(fruit2, 5, "bob") && false;;
+   a * (b - c) + d - e * f
+
 `;
 
+//     && fruit.name == 'apple' && sell(fruit2, 5, "bob") && false;
 const lexer = new Lexer(code);
 const tokens = lexer.lex();
 // console.log(tokens);

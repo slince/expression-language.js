@@ -12,34 +12,6 @@ import ExpressionStatement from "./ast/stmt/expr.js";
 import MethodCallExpression from "./ast/expr/method_call.js";
 import BlockStatement from "./ast/stmt/block.js";
 
-const OPERATOR_LEFT = 1;
-const OPERATOR_RIGHT = 2;
-const binaryOperators = {
-    'or': {'precedence': 10, 'associativity': OPERATOR_LEFT},
-    '||': {'precedence': 10, 'associativity': OPERATOR_LEFT},
-    'and': {'precedence': 15, 'associativity': OPERATOR_LEFT},
-    '&&': {'precedence': 15, 'associativity': OPERATOR_LEFT},
-    '|': {'precedence': 16, 'associativity': OPERATOR_LEFT},
-    '^': {'precedence': 17, 'associativity': OPERATOR_LEFT},
-    '&': {'precedence': 18, 'associativity': OPERATOR_LEFT},
-    '==': {'precedence': 20, 'associativity': OPERATOR_LEFT},
-    '!=': {'precedence': 20, 'associativity': OPERATOR_LEFT},
-    '<': {'precedence': 20, 'associativity': OPERATOR_LEFT},
-    '>': {'precedence': 20, 'associativity': OPERATOR_LEFT},
-    '>=': {'precedence': 20, 'associativity': OPERATOR_LEFT},
-    '<=': {'precedence': 20, 'associativity': OPERATOR_LEFT},
-    'not in': {'precedence': 20, 'associativity': OPERATOR_LEFT},
-    'in': {'precedence': 20, 'associativity': OPERATOR_LEFT},
-    '..': {'precedence': 25, 'associativity': OPERATOR_LEFT},
-    '+': {'precedence': 30, 'associativity': OPERATOR_LEFT},
-    '-': {'precedence': 30, 'associativity': OPERATOR_LEFT},
-    '~': {'precedence': 40, 'associativity': OPERATOR_LEFT},
-    '*': {'precedence': 60, 'associativity': OPERATOR_LEFT},
-    '/': {'precedence': 60, 'associativity': OPERATOR_LEFT},
-    '%': {'precedence': 60, 'associativity': OPERATOR_LEFT},
-    '**': {'precedence': 200, 'associativity': OPERATOR_RIGHT},
-};
-
 class Parser{
 
     constructor(tokens) {
@@ -90,7 +62,7 @@ class Parser{
 
     parseExpression(){
         let expr = this.parsePrimaryExpression();
-        while (this.isOperatorToken()) {
+        while (this.tokens.current().isOperator()) {
             expr = this.parseBinaryExpression(0, expr);
         }
         return expr;
@@ -112,10 +84,13 @@ class Parser{
                 break;
             // punctuation
             case TokenType.T_LBRACKET:
-                expr = this.parseArrayExpression(token);
+                expr = this.parseArrayExpression();
                 break;
             case TokenType.T_LBRACE:
-                expr = this.parseMapExpression(token);
+                expr = this.parseMapExpression();
+                break;
+            case TokenType.T_LPAREN:
+                expr = this.parseParenExpression();
                 break;
             default:
                 throw new SyntaxError(`Unexpected token "${token.type}" of value "${token.value}".`);
@@ -176,38 +151,35 @@ class Parser{
     parseBinaryExpression(precedence, left){
         // a + b * c / d
         // a * b + c
-        while (this.isOperatorToken()) {
-            const operator = Tokens[this.tokens.current().type];
-            const tokenPrecedence = this.currentTokenPrecedence();
-            if (tokenPrecedence < precedence) {
+        while (this.tokens.current().isOperator()) {
+            const token = this.tokens.current();
+            const operator = token.value;
+            const currentPrecedence = token.getPrecedence();
+            if (currentPrecedence < precedence) {
                 break;
             }
             this.tokens.next();
             let right = this.parsePrimaryExpression();
-            const nextPrecedence = this.currentTokenPrecedence();
-            if (tokenPrecedence < nextPrecedence) {
-                right = this.parseBinaryExpression(tokenPrecedence, right);
+            const nextPrecedence = this.tokens.current().getPrecedence();
+            if (currentPrecedence < nextPrecedence) {
+                right = this.parseBinaryExpression(currentPrecedence, right);
             }
 
             left = new BinaryExpression(left, operator, right);
-            precedence = tokenPrecedence;
+            precedence = currentPrecedence;
         }
         return left;
     }
 
-    isOperatorToken(){
-        return typeof binaryOperators[Tokens[this.tokens.current().type]] !== 'undefined';
+    parseParenExpression(){
+        this.tokens.expect(TokenType.T_LPAREN);
+        const expr = this.parseExpression();
+        this.tokens.expect(TokenType.T_RPAREN);
+        return expr;
     }
 
-    currentTokenPrecedence(){
-        const current = this.tokens.current();
-        if (typeof binaryOperators[Tokens[current.type]] !== 'undefined') {
-            return binaryOperators[Tokens[current.type]].precedence;
-        }
-        return -1;
-    }
-
-    parseArrayExpression(token){
+    parseArrayExpression(){
+        const token = this.tokens.current();
         const expr = new ArrayExpression([], token.position);
         while (!this.tokens.current().test(TokenType.T_RBRACKET)) {
             if (!expr.isEmpty()) {
@@ -219,7 +191,8 @@ class Parser{
         return expr;
     }
 
-    parseMapExpression(token){
+    parseMapExpression(){
+        const token = this.tokens.current();
         this.tokens.expect(TokenType.T_LBRACE, 'A map must begin with an opening braces');
         const expr = new MapExpression([], token.position);
         while (!this.tokens.current().test(TokenType.T_RBRACE)) {

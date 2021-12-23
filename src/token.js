@@ -73,6 +73,34 @@ Tokens[TokenType.T_SEMICOLON] = ';';
 Tokens[TokenType.T_DOT] = '.';
 Tokens[TokenType.T_QUESTION_MARK] = '?'
 
+const OPERATOR_LEFT = 1;
+const OPERATOR_RIGHT = 2;
+const binaryOperators = {
+    'or': {'precedence': 10, 'associativity': OPERATOR_LEFT},
+    '||': {'precedence': 10, 'associativity': OPERATOR_LEFT},
+    'and': {'precedence': 15, 'associativity': OPERATOR_LEFT},
+    '&&': {'precedence': 15, 'associativity': OPERATOR_LEFT},
+    '|': {'precedence': 16, 'associativity': OPERATOR_LEFT},
+    '^': {'precedence': 17, 'associativity': OPERATOR_LEFT},
+    '&': {'precedence': 18, 'associativity': OPERATOR_LEFT},
+    '==': {'precedence': 20, 'associativity': OPERATOR_LEFT},
+    '!=': {'precedence': 20, 'associativity': OPERATOR_LEFT},
+    '<': {'precedence': 20, 'associativity': OPERATOR_LEFT},
+    '>': {'precedence': 20, 'associativity': OPERATOR_LEFT},
+    '>=': {'precedence': 20, 'associativity': OPERATOR_LEFT},
+    '<=': {'precedence': 20, 'associativity': OPERATOR_LEFT},
+    'not in': {'precedence': 20, 'associativity': OPERATOR_LEFT},
+    'in': {'precedence': 20, 'associativity': OPERATOR_LEFT},
+    '..': {'precedence': 25, 'associativity': OPERATOR_LEFT},
+    '+': {'precedence': 30, 'associativity': OPERATOR_LEFT},
+    '-': {'precedence': 30, 'associativity': OPERATOR_LEFT},
+    '~': {'precedence': 40, 'associativity': OPERATOR_LEFT},
+    '*': {'precedence': 60, 'associativity': OPERATOR_LEFT},
+    '/': {'precedence': 60, 'associativity': OPERATOR_LEFT},
+    '%': {'precedence': 60, 'associativity': OPERATOR_LEFT},
+    '**': {'precedence': 200, 'associativity': OPERATOR_RIGHT},
+};
+
 class Token
 {
     constructor(type, value, position) {
@@ -83,6 +111,17 @@ class Token
 
     test(type){
         return this.type === type;
+    }
+
+    isOperator(){
+        return typeof binaryOperators[Tokens[this.type]] !== 'undefined';
+    }
+
+    getPrecedence(){
+        if (this.isOperator()) {
+            return binaryOperators[Tokens[this.type]].precedence;
+        }
+        return -1;
     }
 }
 
