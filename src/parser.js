@@ -56,7 +56,7 @@ class Parser{
 
     parseAssignStatement(){
         const token = this.tokens.current();
-        const variable = new LiteralExpression(token.value, token.value, token.position);
+        const variable = new Identifier(token.value, token.position);
         return new AssignStatement(variable, this.parseExpression(), token.lineno);
     }
 
@@ -74,8 +74,11 @@ class Parser{
         switch (token.type) {
             // constant
             case TokenType.T_STR:
-            case TokenType.T_NUM:
                 expr = new LiteralExpression(token.value, token.value, token.position);
+                this.tokens.next();
+                break;
+            case TokenType.T_NUM:
+                expr = new LiteralExpression(Number(token.value), token.value, token.position);
                 this.tokens.next();
                 break;
             // identifier
