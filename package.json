@@ -2,12 +2,12 @@
   "name": "expression.js",
   "version": "1.0.0",
   "description": "An engine that can compile and evaluate expressions written in javascript",
-  "main": "index.js",
-  "type": "module",
-  "author": "slince",
+  "main": "dist/expression.js",
+  "author": "slince <taosikai@yeah.net>",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "type": "module",
   "keywords": [
     "lexer",
     "parser",
@@ -15,5 +15,19 @@
     "expression",
     "expression-language"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.5.4"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slince/expression-language.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/slince/expression-language.js/issues"
+  },
+  "homepage": "https://github.com/slince/expression-language.js#readme"
 }

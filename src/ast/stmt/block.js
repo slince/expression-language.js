@@ -1,8 +1,8 @@
 import Stmt from "../stmt.js";
 
 class BlockStatement extends Stmt{
-    constructor(stmts, lineno) {
-        super(null, lineno);
+    constructor(stmts, position) {
+        super(null, position);
         this.type = 'BlockStatement';
         this.stmts = stmts;
     }

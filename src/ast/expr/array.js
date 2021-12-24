@@ -1,8 +1,8 @@
 import Expr from "../expr.js";
 
 class ArrayExpression extends Expr{
-    constructor(elements, lineno) {
-        super(null, lineno);
+    constructor(elements, position) {
+        super(null, position);
         this.type = 'ArrayExpression';
         this.elements = elements || [];
     }

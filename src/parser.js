@@ -98,8 +98,7 @@ class Parser{
             default:
                 throw new SyntaxError(`Unexpected token "${token.type}" of value "${token.value}".`);
         }
-        expr = this.parsePosixExpression(expr);
-        return expr;
+        return this.parsePosixExpression(expr);
     }
 
     parsePosixExpression(expr){
@@ -108,7 +107,7 @@ class Parser{
             if (token.test(TokenType.T_LPAREN)) {
                 expr = new FunctionCallExpression(expr, this.parseArguments(), token.position);
             } else if (token.test(TokenType.T_DOT)) {
-                expr = this.parseObjectExpression(expr);
+                expr = this.parseObjectExpression(token, expr);
             } else {
                 break;
             }
@@ -139,15 +138,15 @@ class Parser{
         return expr;
     }
 
-    parseObjectExpression(object){
-        const token = this.tokens.current();
+    parseObjectExpression(objectToken, object){
         this.tokens.expect(TokenType.T_DOT);
-        const member = this.tokens.expect(TokenType.T_ID);
+        const token = this.tokens.expect(TokenType.T_ID);
+        const member = new Identifier(token.value, token.position);
         let expr;
-        if (this.tokens.current().test(TokenType.T_LPAREN)) { // object method
-            expr = new MethodCallExpression(object, member, this.parseArguments(), token.position);
-        } else {
-            expr = new PropertyAccessExpression(object, member, token.position);
+        if (this.tokens.current().test(TokenType.T_LPAREN)) { // method
+            expr = new MethodCallExpression(object, member, this.parseArguments(), objectToken.position);
+        } else { // property
+            expr = new PropertyAccessExpression(object, member, objectToken.position);
         }
         return expr;
     }

@@ -8,8 +8,8 @@ class MapEntry{
 }
 
 class MapExpression extends Expr{
-    constructor(entries, lineno) {
-        super(null, lineno);
+    constructor(entries, position) {
+        super(null, position);
         this.type = 'MapExpression';
         this.entries = entries || [];
     }

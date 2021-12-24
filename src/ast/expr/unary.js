@@ -1,8 +1,8 @@
 import Expr from "../expr.js";
 
 class UnaryExpression extends Expr{
-    constructor(operator, lineno) {
-        super(null, lineno);
+    constructor(operator, position) {
+        super(null, position);
         this.type = 'UnaryExpression';
         this.operator = operator;
     }

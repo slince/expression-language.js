@@ -2,8 +2,8 @@ import Expr from "../expr.js";
 import {RuntimeError} from "../../errors.js";
 
 class PropertyAccessExpression extends Expr{
-    constructor(object, property, lineno) {
-        super(null, lineno);
+    constructor(object, property, position) {
+        super(null, position);
         this.type = 'PropertyAccessExpression';
         this.object = object;
         this.property = property;
