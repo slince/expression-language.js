@@ -1,47 +1,29 @@
 import Lexer from "./lexer.js";
 import Parser from "./parser.js";
 
-class Context{
-
+class Runtime{
     constructor(context) {
-        context = context || {};
-        this.functions = Object.assign({}, context.functions || {});
-        this.variables =  Object.assign({}, context.variables || {});
+        this.context = context || {};
     }
 
-    setFunction(name, func){
-        if (typeof func !== 'function') {
-            throw new Error('The func must be a function');
-        }
-        this.functions[name] = func;
+    hasReference(property){
+        return typeof this.context[property] !== 'undefined'
     }
 
-    hasFunction(name){
-        return typeof this.functions[name] !== 'undefined';
+    getReference(property){
+        return this.context[property];
     }
 
-    getFunction(name){
-        return typeof this.functions[name];
-    }
-
-    setVariable(name, variable){
-        this.variables[name] = variable;
-    }
-
-    hasVariable(name){
-        return typeof this.variables[name] !== 'undefined';
-    }
-
-    getVariable(name){
-        return this.variables[name];
+    setReference(property, value){
+        return this.context[property] = value;
     }
 }
 
 class Evaluator{
+
     evaluate(expression, context){
-        context = new Context(context);
         const node = this.createParser(expression).parse();
-        return node.evaluate(context);
+        return node.evaluate(new Runtime(context));
     }
 
     parse(expression){

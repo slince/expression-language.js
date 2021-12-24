@@ -11,6 +11,7 @@ import BinaryExpression from "./ast/expr/binary.js";
 import ExpressionStatement from "./ast/stmt/expr.js";
 import MethodCallExpression from "./ast/expr/method_call.js";
 import BlockStatement from "./ast/stmt/block.js";
+import VariableExpression from "./ast/expr/VariableExpression.js";
 
 class Parser{
 
@@ -132,7 +133,7 @@ class Parser{
                 expr = new LiteralExpression(null, token.value, token.position);
                 break;
             default:
-                expr = new Identifier(token.value, token.position);
+                expr = new VariableExpression(token.value, token.position);
         }
         this.tokens.next();
         return expr;

@@ -11,11 +11,8 @@ class FunctionCallExpression extends Expr{
 
     evaluate(context) {
         const callee = this.callee.evaluate(context);
-        if (!context.hasFunction(callee)) {
-            throw new RuntimeError(`Undefined function ${callee}`, this.callee.position);
-        }
         const args = this.arguments.map(arg => arg.evaluate(context))
-        return context.getFunction(callee)(args);
+        return callee(args);
     }
 }
 

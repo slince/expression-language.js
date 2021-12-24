@@ -10,7 +10,7 @@ class AssignStatement extends Stmt{
 
     evaluate(context) {
         // change runtime context.
-        context.setVariable(this.variable.evaluate(context), this.value.evaluate(context));
+        context.setReference(this.variable.evaluate(context), this.value.evaluate(context));
     }
 }
 
