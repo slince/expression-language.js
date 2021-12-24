@@ -3,7 +3,7 @@ export default {
     isDigit: function(ch) {
         return /[0-9]/i.test(ch);
     },
-    isIdentifierBegin: function(ch) {
+    isLetter: function(ch) {
         return /[a-z_]/i.test(ch);
     },
     isIdentifier: function(ch) {

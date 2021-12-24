@@ -85,7 +85,7 @@ class BinaryExpression extends Expr{
 
                 result = left % right;
         }
-
+        // console.log(this.right);
         return result;
     }
 }

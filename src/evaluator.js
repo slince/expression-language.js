@@ -33,7 +33,7 @@ class Context{
     }
 
     getVariable(name){
-        return typeof this.variables[name];
+        return this.variables[name];
     }
 }
 

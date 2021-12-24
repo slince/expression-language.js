@@ -28,15 +28,18 @@ class Lexer{
                 this.next();
                 continue;
             }
-            // the number.
-            if (Utils.isDigit(ch)) {
-                token = new Token(TokenType.T_NUM, this.readNumber(), this.position());
-            } else if (ch === '\'' || ch === '\"') {  // string.
-                token = new Token(TokenType.T_STR, this.readString(ch), this.position());
-            } else if (Utils.isIdentifierBegin(ch)) {   // the id.
-                token = new Token(TokenType.T_ID, this.readIdentifier(ch), this.position());
-            } else {
-                token = this.lexPunctuation(ch);
+            switch (true) {
+                case Utils.isDigit(ch):
+                    token = new Token(TokenType.T_NUM, this.readNumber(), this.position());
+                    break;
+                case ch === '\'' || ch === '\"':
+                    token = new Token(TokenType.T_STR, this.readString(ch), this.position());
+                    break;
+                case Utils.isLetter(ch):
+                    token = new Token(TokenType.T_ID, this.readIdentifier(), this.position());
+                    break;
+                default:
+                    token = this.lexPunctuation();
             }
             tokens.add(token);
         }
@@ -45,9 +48,9 @@ class Lexer{
         return tokens;
     }
 
-    lexPunctuation(ch){
+    lexPunctuation(){
         let type, next;
-        switch (ch) {
+        switch (this.current()) {
             case '=':
                 type = TokenType.T_ASSIGN;
                 next = this.look();
