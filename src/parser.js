@@ -108,7 +108,7 @@ class Parser{
             if (token.test(TokenType.T_LPAREN)) {
                 expr = new FunctionCallExpression(expr, this.parseArguments(), token.position);
             } else if (token.test(TokenType.T_DOT)) {
-                expr = this.parseObjectExpression(token, expr);
+                expr = this.parseObjectExpression(expr);
             } else {
                 break;
             }
@@ -139,7 +139,8 @@ class Parser{
         return expr;
     }
 
-    parseObjectExpression(token, object){
+    parseObjectExpression(object){
+        const token = this.tokens.current();
         this.tokens.expect(TokenType.T_DOT);
         const member = this.tokens.expect(TokenType.T_ID);
         let expr;
