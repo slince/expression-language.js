@@ -8,7 +8,7 @@ class Identifier extends Node{
         this.value = value;
     }
 
-    evaluate(context) {
+    evaluate(runtime) {
         return this.value;
     }
 }

@@ -7,9 +7,9 @@ class CallExpression extends Expr{
         this.args = args;
     }
 
-    evaluate(context) {
-        const callee = this.callee.evaluate(context);
-        const args = this.args.map(arg => arg.evaluate(context))
+    evaluate(runtime) {
+        const callee = this.callee.evaluate(runtime);
+        const args = this.args.map(arg => arg.evaluate(runtime))
         return callee(args);
     }
 }

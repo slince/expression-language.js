@@ -7,10 +7,10 @@ class BlockStatement extends Stmt{
         this.stmts = stmts;
     }
 
-    evaluate(context) {
+    evaluate(runtime) {
         let evaluated; //return last statement.
         this.stmts.forEach((stmt) => {
-            evaluated = stmt.evaluate(context);
+            evaluated = stmt.evaluate(runtime);
         })
         return evaluated;
     }

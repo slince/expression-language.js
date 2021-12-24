@@ -8,7 +8,7 @@ class LiteralExpression extends Expr{
         this.raw = raw;
     }
 
-    evaluate(context) {
+    evaluate(runtime) {
        return this.value;
     }
 }

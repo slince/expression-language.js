@@ -8,11 +8,11 @@ class VariableExpression extends Node{
         this.value = value;
     }
 
-    evaluate(context) {
-        if (!context.hasReference(this.value)) {
+    evaluate(runtime) {
+        if (!runtime.hasReference(this.value)) {
             throw new RuntimeError(`Undefined Reference, ${this.value} is not defined`, this.position);
         }
-        return context.getReference(this.value);
+        return runtime.getReference(this.value);
     }
 }
 

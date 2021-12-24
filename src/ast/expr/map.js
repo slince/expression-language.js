@@ -22,10 +22,10 @@ class MapExpression extends Expr{
         return this.entries.length === 0;
     }
 
-    evaluate(context) {
+    evaluate(runtime) {
         const result = {};
         this.entries.forEach(entry => {
-           result[entry.key.evaluate(context)] = entry.value.evaluate(context)
+           result[entry.key.evaluate(runtime)] = entry.value.evaluate(runtime)
         });
         return result;
     }

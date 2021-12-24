@@ -8,9 +8,9 @@ class AssignStatement extends Stmt{
         this.value = value;
     }
 
-    evaluate(context) {
-        // change runtime context.
-        context.setReference(this.variable.evaluate(context), this.value.evaluate(context));
+    evaluate(runtime) {
+        // change runtime runtime.
+        runtime.setReference(this.variable.evaluate(runtime), this.value.evaluate(runtime));
     }
 }
 

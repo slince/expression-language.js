@@ -8,9 +8,9 @@ import Expr from "../expr.js";
         this.computed = computed;
     }
 
-    evaluate(context) {
-        const object = this.object.evaluate(context);
-        const property = this.property.evaluate(context);
+    evaluate(runtime) {
+        const object = this.object.evaluate(runtime);
+        const property = this.property.evaluate(runtime);
         return object[property];
     }
 }

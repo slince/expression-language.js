@@ -9,13 +9,13 @@ class UpdateExpression extends Expr{
         this.position = position;
     }
 
-    evaluate(context) {
-        const argument = this.argument.evaluate(context);
+    evaluate(runtime) {
+        const argument = this.argument.evaluate(runtime);
         let result = argument;
         if (this.prefix) {
             result = argument + 1;
         }
-        context.setReference(this.argument.value, result);
+        runtime.setReference(this.argument.value, result);
         return result;
     }
 }

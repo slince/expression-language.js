@@ -11,9 +11,9 @@ class BinaryExpression extends Expr{
         this.right = right;
     }
 
-    evaluate(context) {
-        const left = this.left.evaluate(context);
-        const right = this.right.evaluate(context);
+    evaluate(runtime) {
+        const left = this.left.evaluate(runtime);
+        const right = this.right.evaluate(runtime);
         let result;
         switch (this.operator) {
             case '||':

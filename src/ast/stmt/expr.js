@@ -7,8 +7,8 @@ class ExpressionStatement extends Stmt{
         this.expression = expression;
     }
 
-    evaluate(context) {
-        return this.expression.evaluate(context);
+    evaluate(runtime) {
+        return this.expression.evaluate(runtime);
     }
 }
 

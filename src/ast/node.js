@@ -5,7 +5,7 @@ class Node{
         this.position = position;
     }
 
-    evaluate(context){
+    evaluate(runtime){
 
     }
 }

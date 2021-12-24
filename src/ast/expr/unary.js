@@ -9,23 +9,23 @@ class UnaryExpression extends Expr{
         this.target = target;
     }
 
-    evaluate(context) {
+    evaluate(runtime) {
         let result;
         switch (this.operator) {
             case '++':
-                result = this.target.evaluate(context)
+                result = this.target.evaluate(runtime)
                 break;
             case '--':
-                result = this.target.evaluate(context);
+                result = this.target.evaluate(runtime);
                 break;
             case '!':
-                result = !Boolean(this.target.evaluate(context))
+                result = !Boolean(this.target.evaluate(runtime))
                 break;
             case '+':
-                result = this.target.evaluate(context);
+                result = this.target.evaluate(runtime);
                 break;
             case '-':
-                result = -Number(this.target.evaluate(context));
+                result = -Number(this.target.evaluate(runtime));
                 break;
             default:
                 throw new RuntimeError(`Unrecognized operator ${this.operator}`);
