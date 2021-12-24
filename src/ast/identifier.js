@@ -1,4 +1,5 @@
 import Node from "./node.js";
+import {RuntimeError} from "../errors.js";
 
 class Identifier extends Node{
     constructor(value, lineno) {
@@ -8,7 +9,10 @@ class Identifier extends Node{
     }
 
     evaluate(context) {
-        return this.value;
+         if (!context.hasVariable(this.value)) {
+             throw new RuntimeError(`Undefined variable ${this.value}`, this.position);
+         }
+         return context.getVariable(this.value);
     }
 }
 

@@ -3,7 +3,7 @@ import Parser from "./src/parser.js";
 
 const code = `
 
-   a * (b - c) + d - e * f
+a.b()
 
 `;
 
