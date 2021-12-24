@@ -1,6 +1,6 @@
 # Node modules
 node_modules/
-
+.idea/
 # Cover
 .coverage_data/
 cover_html/
