@@ -3,7 +3,7 @@ import {RuntimeError} from "../errors.js";
 
 class Identifier extends Node{
     constructor(value, position) {
-        super(null, position);
+        super(position);
         this.type = 'Identifier';
         this.value = value;
     }

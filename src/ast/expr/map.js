@@ -9,7 +9,7 @@ class MapEntry{
 
 class MapExpression extends Expr{
     constructor(entries, position) {
-        super(null, position);
+        super(position);
         this.type = 'MapExpression';
         this.entries = entries || [];
     }

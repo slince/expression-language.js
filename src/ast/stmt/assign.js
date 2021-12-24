@@ -2,7 +2,7 @@ import Stmt from "../stmt.js";
 
 class AssignStatement extends Stmt{
     constructor(variable, value, position) {
-        super(null, position);
+        super(position);
         this.type = 'AssignStatement';
         this.variable = variable;
         this.value = value;

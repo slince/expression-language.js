@@ -1,6 +1,6 @@
 
 class Node{
-    constructor(nodes, position) {
+    constructor(position) {
         this.type = 'Node';
         this.position = position;
     }

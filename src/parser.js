@@ -1,7 +1,5 @@
 import {TokenType} from "./token.js";
 import Identifier from "./ast/identifier.js";
-import FunctionCallExpression from "./ast/expr/function_call.js";
-import PropertyAccessExpression from "./ast/expr/property_access.js";
 import ArrayExpression from "./ast/expr/array.js";
 import LiteralExpression from "./ast/expr/literal.js";
 import AssignStatement from "./ast/stmt/assign.js";
@@ -9,9 +7,10 @@ import {MapExpression} from "./ast/expr/map.js";
 import {SyntaxError} from "./errors.js";
 import BinaryExpression from "./ast/expr/binary.js";
 import ExpressionStatement from "./ast/stmt/expr.js";
-import MethodCallExpression from "./ast/expr/method_call.js";
 import BlockStatement from "./ast/stmt/block.js";
 import VariableExpression from "./ast/expr/VariableExpression.js";
+import MemberExpression from "./ast/expr/member";
+import CallExpression from "./ast/expr/call";
 
 class Parser{
 
@@ -63,7 +62,7 @@ class Parser{
 
     parseExpression(){
         let expr = this.parsePrimaryExpression();
-        while (this.tokens.current().isOperator()) {
+        while (this.tokens.current().isBinaryOperator()) {
             expr = this.parseBinaryExpression(0, expr);
         }
         return expr;
@@ -96,6 +95,16 @@ class Parser{
             case TokenType.T_LPAREN:
                 expr = this.parseParenExpression();
                 break;
+            // unary operator
+            case TokenType.T_INC:
+            case TokenType.T_DEC:
+                expr = this.parseUpdateExpression();
+                break;
+            case TokenType.T_NOT:
+            case TokenType.T_ADD:
+            case TokenType.T_SUB:
+                expr = this.parseUnaryExpression();
+                break;
             default:
                 throw new SyntaxError(`Unexpected token "${token.type}" of value "${token.value}".`);
         }
@@ -105,11 +114,26 @@ class Parser{
     parsePosixExpression(expr){
         while (true) {
             const token = this.tokens.current();
-            if (token.test(TokenType.T_LPAREN)) {
-                expr = new FunctionCallExpression(expr, this.parseArguments(), token.position);
-            } else if (token.test(TokenType.T_DOT)) {
-                expr = this.parseObjectExpression(token, expr);
-            } else {
+            let end = false;
+            switch (token.type) {
+                case TokenType.T_LPAREN:
+                    expr = new CallExpression(expr, this.parseArguments(), token.position);
+                    break;
+                case TokenType.T_DOT:
+                    expr = this.parseObjectExpression(token, expr);
+                    break;
+                case TokenType.T_LBRACKET: // array[1] , map['property']
+                    expr = this.parseAccessExpression(token, expr);
+                     break;
+                // unary operator
+                case TokenType.T_INC:
+                case TokenType.T_DEC:
+                    expr = this.parseUpdateExpression();
+                default:
+                    end = true;
+                    break;
+            }
+            if (end) {
                 break;
             }
         }
@@ -142,29 +166,34 @@ class Parser{
     parseObjectExpression(objectToken, object){
         this.tokens.expect(TokenType.T_DOT);
         const token = this.tokens.expect(TokenType.T_ID);
-        const member = new Identifier(token.value, token.position);
-        let expr;
+        const property = new Identifier(token.value, token.position);
+        let expr = new MemberExpression(object, property, false, object.position)
         if (this.tokens.current().test(TokenType.T_LPAREN)) { // method
-            expr = new MethodCallExpression(object, member, this.parseArguments(), objectToken.position);
-        } else { // property
-            expr = new PropertyAccessExpression(object, member, objectToken.position);
+            expr = new CallExpression(expr, this.parseArguments(), objectToken.position);
         }
         return expr;
+    }
+
+    parseAccessExpression(objectToken, object){
+        this.tokens.expect(TokenType.T_LBRACKET);
+        const property = this.parseExpression();
+        this.tokens.expect(TokenType.T_RBRACKET);
+        return new MemberExpression(object, property, false, object.position)
     }
 
     parseBinaryExpression(precedence, left){
         // a + b * c / d
         // a * b + c
-        while (this.tokens.current().isOperator()) {
+        while (this.tokens.current().isBinaryOperator()) {
             const token = this.tokens.current();
             const operator = token.value;
-            const currentPrecedence = token.getPrecedence();
+            const currentPrecedence = token.getBinaryPrecedence();
             if (currentPrecedence < precedence) {
                 break;
             }
             this.tokens.next();
             let right = this.parsePrimaryExpression();
-            const nextPrecedence = this.tokens.current().getPrecedence();
+            const nextPrecedence = this.tokens.current().getBinaryPrecedence();
             if (currentPrecedence < nextPrecedence) {
                 right = this.parseBinaryExpression(currentPrecedence, right);
             }
@@ -173,6 +202,27 @@ class Parser{
             precedence = currentPrecedence;
         }
         return left;
+    }
+
+    parseUpdateExpression(){
+        this.tokens.expectOneOf(TokenType.T_INC, TokenType.T_DEC);
+        const expr = this.parseUnaryExpression();
+        if (expr.type === 'variable') {
+            
+        }
+    }
+
+    parseUnaryExpression(){
+        // const operator = token.value;
+        // const currentPrecedence = token.getUnaryPrecedence();
+        // !+-+-+-!!+-10
+        while (this.tokens.current().isUnaryOperator()) {
+            const token = this.tokens.current();
+            if (token.test(TokenType.T_INC) || token.test(TokenType.T_DEC)) {
+
+            }
+        }
+        return expr;
     }
 
     parseParenExpression(){

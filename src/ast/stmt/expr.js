@@ -2,7 +2,7 @@ import Stmt from "../stmt.js";
 
 class ExpressionStatement extends Stmt{
     constructor(expression, position) {
-        super(null, position);
+        super(position);
         this.type = 'ExpressionStatement';
         this.expression = expression;
     }

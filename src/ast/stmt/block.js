@@ -2,7 +2,7 @@ import Stmt from "../stmt.js";
 
 class BlockStatement extends Stmt{
     constructor(stmts, position) {
-        super(null, position);
+        super(position);
         this.type = 'BlockStatement';
         this.stmts = stmts;
     }

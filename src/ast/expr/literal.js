@@ -2,7 +2,7 @@ import Expr from "../expr.js";
 
 class LiteralExpression extends Expr{
     constructor(value, raw, position) {
-        super(null, position);
+        super(position);
         this.type = 'LiteralExpression';
         this.value = value;
         this.raw = raw;

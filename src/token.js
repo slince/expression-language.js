@@ -101,8 +101,16 @@ const binaryOperators = {
     '**': {'precedence': 200, 'associativity': OPERATOR_RIGHT},
 };
 
-class Token
-{
+const unaryOperators = {
+    'not': {'precedence': 50},
+    '!': {'precedence': 50},
+    '-': {'precedence': 500},
+    '+': {'precedence': 500},
+    '--': {'precedence': 500},
+    '++': {'precedence': 500},
+};
+
+class Token{
     constructor(type, value, position) {
         this.type = type;
         this.value = value;
@@ -113,13 +121,24 @@ class Token
         return this.type === type;
     }
 
-    isOperator(){
+    isBinaryOperator(){
         return typeof binaryOperators[Tokens[this.type]] !== 'undefined';
     }
 
-    getPrecedence(){
-        if (this.isOperator()) {
+    getBinaryPrecedence(){
+        if (this.isBinaryOperator()) {
             return binaryOperators[Tokens[this.type]].precedence;
+        }
+        return -1;
+    }
+
+    isUnaryOperator(){
+        return typeof unaryOperators[Tokens[this.type]] !== 'undefined';
+    }
+
+    getUnaryPrecedence(){
+        if (this.isBinaryOperator()) {
+            return unaryOperators[Tokens[this.type]].precedence;
         }
         return -1;
     }

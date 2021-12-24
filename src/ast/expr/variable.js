@@ -3,7 +3,7 @@ import {RuntimeError} from "../../errors.js";
 
 class VariableExpression extends Node{
     constructor(value, position) {
-        super(null, position);
+        super(position);
         this.type = 'Variable';
         this.value = value;
     }

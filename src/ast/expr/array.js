@@ -2,7 +2,7 @@ import Expr from "../expr.js";
 
 class ArrayExpression extends Expr{
     constructor(elements, position) {
-        super(null, position);
+        super(position);
         this.type = 'ArrayExpression';
         this.elements = elements || [];
     }
