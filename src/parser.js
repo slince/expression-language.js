@@ -67,8 +67,8 @@ class Parser{
         if (this.tokens.current().testAny(TokenType.T_INC, TokenType.T_DEC)) {// unary operator
             expr = this.parseUpdateExpression(false, expr);
         }
-        while (this.tokens.current().isBinaryOperator()) {
-            expr = this.parseBinaryExpression(0, expr);
+        if (this.tokens.current().isBinaryOperator()) {
+            expr = this.parseBinaryExpression(expr);
         }
         return expr;
     }
@@ -181,32 +181,44 @@ class Parser{
         return new MemberExpression(object, property, false, object.position)
     }
 
-    parseBinaryExpression(precedence, left){
+    parseBinaryExpression(expr){
         // a + b * c / d
         // a * b + c
         while (this.tokens.current().isBinaryOperator()) {
-            const token = this.tokens.current();
-            const operator = token.value;
-            const currentPrecedence = token.getBinaryPrecedence();
-            if (currentPrecedence < precedence) {
-                break;
-            }
-            this.tokens.next();
-            let right = this.parsePrimaryExpression();
-            const nextPrecedence = this.tokens.current().getBinaryPrecedence();
-            if (currentPrecedence < nextPrecedence) {
-                right = this.parseBinaryExpression(currentPrecedence, right);
-            }
-
-            left = new BinaryExpression(left, operator, right, left.position);
-            precedence = currentPrecedence;
+            expr = this.doParseBinary(expr);
         }
-        return left;
+        return expr;
+    }
+
+    doParseBinary(left){
+        const token = this.tokens.current();
+        const operator = token.value;
+        const currentPrecedence = token.getBinaryPrecedence();
+
+        // right expr.
+        this.tokens.next();
+        let right = this.parsePrimaryExpression();
+        const nextPrecedence = this.tokens.current().getBinaryPrecedence();
+        if (currentPrecedence < nextPrecedence) {
+            right = this.doParseBinary(right);
+        }
+        return new BinaryExpression(left, operator, right, left.position);
+    }
+
+    parseUnaryExpression(){
+        // !+-+-+-!!+-10
+        const token = this.tokens.current();
+        const operator = token.value;
+        this.tokens.next();
+        const argument = this.parsePrimaryExpression();
+        return new UnaryExpression(operator, argument, token.position);
     }
 
     parseUpdateExpression(prefix, argument){
         const token = this.tokens.expectOneOf(TokenType.T_INC, TokenType.T_DEC);
         if (prefix) {  // ++a ++a.b ++a.read()
+            // ++ a + 1
+            // a + b --
             argument = this.parsePrimaryExpression();
         } else {  // a ++  a.b ++ a.c() ++
         }
@@ -214,18 +226,6 @@ class Parser{
             throw new SyntaxError('Invalid left-hand side in assignment');
         }
         return new UpdateExpression(token.value, argument, prefix, prefix ? token.position : argument.position)
-    }
-
-    parseUnaryExpression(){
-        // const operator = token.value;
-        // const currentPrecedence = token.getUnaryPrecedence();
-        // !+-+-+-!!+-10
-        let expr;
-        while (this.tokens.current().isUnaryOperator()) {
-            const token = this.tokens.current();
-            expr = new UnaryExpression(token.valueOf(), this.parseUnaryExpression(),token.position);
-        }
-        return expr;
     }
 
     parseParenExpression(){

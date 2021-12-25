@@ -72,18 +72,19 @@ class BinaryExpression extends Expr{
                 break;
             case '*':
                 result = left * right;
+                break;
             case '/':
                 if (0 == right) {
                     throw new RuntimeError('Division by zero.', this.right.position);
                 }
-
                 result = left / right;
+                break;
             case '%':
                 if (0 == right) {
                     throw new RuntimeError('Modulo by zero.', this.right.position);
                 }
-
                 result = left % right;
+                break;
         }
         // console.log(this.right);
         return result;

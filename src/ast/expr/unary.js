@@ -2,30 +2,30 @@ import Expr from "../expr.js";
 import {RuntimeError} from "../../errors.js";
 
 class UnaryExpression extends Expr{
-    constructor(operator, target, position) {
+    constructor(operator, argument, position) {
         super(position);
         this.type = 'UnaryExpression';
         this.operator = operator;
-        this.target = target;
+        this.argument = argument;
     }
 
     evaluate(runtime) {
         let result;
         switch (this.operator) {
             case '++':
-                result = this.target.evaluate(runtime)
+                result = this.argument.evaluate(runtime)
                 break;
             case '--':
-                result = this.target.evaluate(runtime);
+                result = this.argument.evaluate(runtime);
                 break;
             case '!':
-                result = !Boolean(this.target.evaluate(runtime))
+                result = !Boolean(this.argument.evaluate(runtime))
                 break;
             case '+':
-                result = this.target.evaluate(runtime);
+                result = this.argument.evaluate(runtime);
                 break;
             case '-':
-                result = -Number(this.target.evaluate(runtime));
+                result = -Number(this.argument.evaluate(runtime));
                 break;
             default:
                 throw new RuntimeError(`Unrecognized operator ${this.operator}`);

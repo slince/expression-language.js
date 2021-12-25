@@ -2,16 +2,18 @@ import Evaluator from "./src/evaluator.js";
 
 
 // const code = `!!+-a`;
-const code = `a + b / c`;
+const code = `b + c ++`;
 
 const evaluator = new Evaluator();
 
-const result = evaluator.parse(code, {
-      a: {
-          read: function(){
-              return {a: 10}
-          }
+const result = evaluator.evaluate(code, {
+    a: {
+      read: function(){
+          return {a: 10}
       }
+    },
+    b: 2,
+    c: 6
 });
 
 // console.log(result);
