@@ -1,7 +1,8 @@
 import Evaluator from "./src/evaluator.js";
 
 
-const code = `++ a --`;
+// const code = `!!+-a`;
+const code = `a + b / c`;
 
 const evaluator = new Evaluator();
 

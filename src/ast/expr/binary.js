@@ -4,7 +4,7 @@ import {RuntimeError} from "../../errors.js";
 class BinaryExpression extends Expr{
 
     constructor(left, operator, right, position) {
-        super([], position);
+        super(position);
         this.type = 'BinaryExpression';
         this.left = left;
         this.operator = operator;

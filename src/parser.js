@@ -64,6 +64,9 @@ class Parser{
 
     parseExpression(){
         let expr = this.parsePrimaryExpression();
+        if (this.tokens.current().testAny(TokenType.T_INC, TokenType.T_DEC)) {// unary operator
+            expr = this.parseUpdateExpression(false, expr);
+        }
         while (this.tokens.current().isBinaryOperator()) {
             expr = this.parseBinaryExpression(0, expr);
         }
@@ -127,10 +130,6 @@ class Parser{
                 case TokenType.T_LBRACKET: // array[1] , map['property']
                     expr = this.parseAccessExpression(token, expr);
                      break;
-                // unary operator
-                case TokenType.T_INC:
-                case TokenType.T_DEC:
-                    expr = this.parseUpdateExpression(false, expr);
                 default:
                     end = true;
             }
@@ -199,7 +198,7 @@ class Parser{
                 right = this.parseBinaryExpression(currentPrecedence, right);
             }
 
-            left = new BinaryExpression(left, operator, right);
+            left = new BinaryExpression(left, operator, right, left.position);
             precedence = currentPrecedence;
         }
         return left;
@@ -210,7 +209,6 @@ class Parser{
         if (prefix) {  // ++a ++a.b ++a.read()
             argument = this.parsePrimaryExpression();
         } else {  // a ++  a.b ++ a.c() ++
-
         }
         if (!(argument instanceof VariableExpression) && !(argument instanceof MemberExpression)) {
             throw new SyntaxError('Invalid left-hand side in assignment');

@@ -121,6 +121,10 @@ class Token{
         return this.type === type;
     }
 
+    testAny(...types){
+        return types.indexOf(this.type) > -1;
+    }
+
     isBinaryOperator(){
         return typeof binaryOperators[Tokens[this.type]] !== 'undefined';
     }
@@ -180,7 +184,7 @@ class TokenStream{
 
     expectOneOf(...types) {
         const token = this.current();
-        if (types.indexOf(token.type) === -1) {
+        if (!token.testAny(...types)) {
             const values = types.map((type)=>Tokens[type] || '');
             const message = `Unexpected token "${token.type}" of value "${token.value}" ("${types.join(',')}" expected ${values ? 'with value ' + values.join(',') : ''}).`;
             throw new SyntaxError(message, token.position);
