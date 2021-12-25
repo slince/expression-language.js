@@ -28,29 +28,30 @@ class Lexer{
                 this.next();
                 continue;
             }
+            const position = this.position();
             switch (true) {
                 case Utils.isDigit(ch):
-                    token = new Token(TokenType.T_NUM, this.readNumber(), this.position());
+                    token = new Token(TokenType.T_NUM, this.readNumber(), position);
                     break;
                 case ch === '\'' || ch === '\"':
-                    token = new Token(TokenType.T_STR, this.readString(ch), this.position());
+                    token = new Token(TokenType.T_STR, this.readString(ch), position);
                     break;
                 case Utils.isLetter(ch):
-                    token = new Token(TokenType.T_ID, this.readIdentifier(), this.position());
+                    token = new Token(TokenType.T_ID, this.readIdentifier(), position);
                     break;
                 default:
-                    token = this.lexPunctuation();
+                    token = this.lexPunctuation(position);
             }
             tokens.add(token);
         }
-        this.next();
         tokens.add(new Token(TokenType.T_EOF, Tokens[TokenType.T_EOF], this.position()));
         return tokens;
     }
 
-    lexPunctuation(){
+    lexPunctuation(position){
         let type, next;
-        switch (this.current()) {
+        let ch = this.current()
+        switch (ch) {
             case '=':
                 type = TokenType.T_ASSIGN;
                 next = this.look();
@@ -155,10 +156,10 @@ class Lexer{
                 type = TokenType.T_QUESTION_MARK;
                 break;
             default:
-                throw new SyntaxError(`Unrecognized punctuation ${ch}`, this.position());
+                throw new SyntaxError(`Unrecognized punctuation ${ch}`, position);
         }
         this.next();
-        return new Token(type, Tokens[type], this.position());
+        return new Token(type, Tokens[type], position);
     }
 
     readNumber(){

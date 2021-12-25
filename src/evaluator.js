@@ -30,8 +30,16 @@ class Evaluator{
         return this.createParser(expression).parse();
     }
 
+    lex(expression){
+        return this.createLexer(expression).lex();
+    }
+
     createParser(source){
-        return  new Parser(new Lexer(source).lex());
+        return  new Parser(this.createLexer(source).lex());
+    }
+
+    createLexer(source){
+        return new Lexer(source);
     }
 }
 

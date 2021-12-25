@@ -8,9 +8,11 @@ import {SyntaxError} from "./errors.js";
 import BinaryExpression from "./ast/expr/binary.js";
 import ExpressionStatement from "./ast/stmt/expr.js";
 import BlockStatement from "./ast/stmt/block.js";
-import VariableExpression from "./ast/expr/VariableExpression.js";
-import MemberExpression from "./ast/expr/member";
-import CallExpression from "./ast/expr/call";
+import VariableExpression from "./ast/expr/variable.js";
+import MemberExpression from "./ast/expr/member.js";
+import CallExpression from "./ast/expr/call.js";
+import UpdateExpression from "./ast/expr/update.js";
+import UnaryExpression from "./ast/expr/unary.js";
 
 class Parser{
 
@@ -98,7 +100,7 @@ class Parser{
             // unary operator
             case TokenType.T_INC:
             case TokenType.T_DEC:
-                expr = this.parseUpdateExpression();
+                expr = this.parseUpdateExpression(true);
                 break;
             case TokenType.T_NOT:
             case TokenType.T_ADD:
@@ -128,10 +130,9 @@ class Parser{
                 // unary operator
                 case TokenType.T_INC:
                 case TokenType.T_DEC:
-                    expr = this.parseUpdateExpression();
+                    expr = this.parseUpdateExpression(false, expr);
                 default:
                     end = true;
-                    break;
             }
             if (end) {
                 break;
@@ -204,23 +205,27 @@ class Parser{
         return left;
     }
 
-    parseUpdateExpression(){
-        this.tokens.expectOneOf(TokenType.T_INC, TokenType.T_DEC);
-        const expr = this.parseUnaryExpression();
-        if (expr.type === 'variable') {
-            
+    parseUpdateExpression(prefix, argument){
+        const token = this.tokens.expectOneOf(TokenType.T_INC, TokenType.T_DEC);
+        if (prefix) {  // ++a ++a.b ++a.read()
+            argument = this.parsePrimaryExpression();
+        } else {  // a ++  a.b ++ a.c() ++
+
         }
+        if (!(argument instanceof VariableExpression) && !(argument instanceof MemberExpression)) {
+            throw new SyntaxError('Invalid left-hand side in assignment');
+        }
+        return new UpdateExpression(token.value, argument, prefix, prefix ? token.position : argument.position)
     }
 
     parseUnaryExpression(){
         // const operator = token.value;
         // const currentPrecedence = token.getUnaryPrecedence();
         // !+-+-+-!!+-10
+        let expr;
         while (this.tokens.current().isUnaryOperator()) {
             const token = this.tokens.current();
-            if (token.test(TokenType.T_INC) || token.test(TokenType.T_DEC)) {
-
-            }
+            expr = new UnaryExpression(token.valueOf(), this.parseUnaryExpression(),token.position);
         }
         return expr;
     }

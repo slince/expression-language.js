@@ -1,5 +1,5 @@
 import Expr from "../expr.js";
-import {RuntimeError} from "../../errors";
+import {RuntimeError} from "../../errors.js";
 
 class UnaryExpression extends Expr{
     constructor(operator, target, position) {

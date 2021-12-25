@@ -1,8 +1,9 @@
-import Expr from "../expr";
+import Expr from "../expr.js";
 
 class UpdateExpression extends Expr{
     constructor(operator, argument, prefix, position) {
         super(position);
+        this.type = 'UpdateExpression';
         this.operator = operator;
         this.argument = argument;
         this.prefix = prefix;

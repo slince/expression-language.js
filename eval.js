@@ -1,9 +1,7 @@
 import Evaluator from "./src/evaluator.js";
 
 
-const code = `
-a.read().a
-`;
+const code = `++ a --`;
 
 const evaluator = new Evaluator();
 
@@ -15,5 +13,5 @@ const result = evaluator.parse(code, {
       }
 });
 
-console.log(result);
+// console.log(result);
 console.log(JSON.stringify(result));
