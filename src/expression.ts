@@ -1,8 +1,8 @@
-import Lexer from "./lexer.js";
-import Parser from "./parser.js";
+import Lexer from "./lexer";
+import Parser from "./parser";
 import {GenericRuntime, Runtime} from "./runtime";
 
-export default class Expression{
+class Expression{
 
     // Evaluate the expression and return output of the last expr.
     evaluate(source: string, context: {} | Runtime){
@@ -35,3 +35,5 @@ export default class Expression{
         return new Lexer(source);
     }
 }
+
+export default Expression;

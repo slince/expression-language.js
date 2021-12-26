@@ -1,8 +1,9 @@
-import {Expr, Identifier} from "../node";
+import {Expr, Identifier, RuntimeChanger} from "../node";
 import Position from "../../position";
 import {Runtime} from "../../runtime";
+import {RuntimeError} from "../../errors";
 
-class MemberExpression extends Expr{
+class MemberExpression extends Expr implements RuntimeChanger{
     private readonly object: Expr;
     private readonly property: Identifier;
     private readonly computed: boolean;
@@ -20,13 +21,13 @@ class MemberExpression extends Expr{
         return object[property];
     }
 
-    changeReference(runtime: Runtime, value: any): void {
+    changeRuntime(runtime: Runtime, value: any): void {
         const object = this.object.evaluate(runtime);
         const property = this.property.evaluate(runtime);
-
         if (typeof object[property] !== 'undefined' && typeof object[property] !== 'function') {
             object[property] = value;
-            // this.object.changeReference(runtime, object);
+        } else {
+            throw new RuntimeError('Cannot change reference.');
         }
     }
 }

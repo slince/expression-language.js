@@ -1,9 +1,9 @@
 import {RuntimeError} from "../../errors";
-import {Expr} from "../node";
+import {Expr, RuntimeChanger} from "../node";
 import Position from "../../position";
 import {Runtime} from "../../runtime";
 
-class VariableExpression extends Expr{
+class VariableExpression extends Expr implements RuntimeChanger{
     private readonly value: string;
 
     constructor(value: string, position: Position) {
@@ -19,11 +19,7 @@ class VariableExpression extends Expr{
         return runtime.getReference(this.value);
     }
 
-    getReference(runtime: Runtime){
-        return runtime.getReference(this.value);
-    }
-
-    changeReference(runtime: Runtime, value: any): void {
+    changeRuntime(runtime: Runtime, value: any): void {
         runtime.setReference(this.value, value);
     }
 }

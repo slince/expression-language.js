@@ -7,8 +7,8 @@ interface Node {
     evaluate(runtime: Runtime): any;
 }
 
-interface RuntimeChanger{
-    changeReference(reference: string, value: any): void;
+export interface RuntimeChanger{
+    changeRuntime(runtime: Runtime, value: any): void;
 }
 
 // root node.

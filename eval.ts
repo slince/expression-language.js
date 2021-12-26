@@ -1,21 +1,11 @@
-import Evaluator from "./src/evaluator.js";
-
+import Evaluator from "./src/expression";
 
 const code = `!!+--a`;
 // const code = `++ b + c++`;
 
 const evaluator = new Evaluator();
 
-const result = evaluator.parse(code, {
-    a: {
-      read: function(){
-          return {a: 10}
-      }
-    },
-    b: 2,
-    c: 6
-});
-
+const result = evaluator.parse(code);
 
 const result2 = evaluator.evaluate(code, {
     a: {

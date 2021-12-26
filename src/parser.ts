@@ -1,17 +1,17 @@
 import {TokenStream, TokenType} from "./token";
-import ArrayExpression from "./ast/expr/array.js";
-import LiteralExpression from "./ast/expr/literal.js";
-import AssignStatement from "./ast/stmt/assign.js";
-import MapExpression from "./ast/expr/map.js";
-import {SyntaxError} from "./errors.js";
-import BinaryExpression from "./ast/expr/binary.js";
-import ExpressionStatement from "./ast/stmt/expr.js";
-import BlockStatement from "./ast/stmt/block.js";
-import VariableExpression from "./ast/expr/variable.js";
-import MemberExpression from "./ast/expr/member.js";
-import CallExpression from "./ast/expr/call.js";
-import UpdateExpression from "./ast/expr/update.js";
-import UnaryExpression from "./ast/expr/unary.js";
+import {SyntaxError} from "./errors";
+import ArrayExpression from "./ast/expr/array";
+import LiteralExpression from "./ast/expr/literal";
+import AssignStatement from "./ast/stmt/assign";
+import MapExpression from "./ast/expr/map";
+import BinaryExpression from "./ast/expr/binary";
+import ExpressionStatement from "./ast/stmt/expr";
+import BlockStatement from "./ast/stmt/block";
+import VariableExpression from "./ast/expr/variable";
+import MemberExpression from "./ast/expr/member";
+import CallExpression from "./ast/expr/call";
+import UpdateExpression from "./ast/expr/update";
+import UnaryExpression from "./ast/expr/unary";
 import {Expr, Stmt, Identifier} from "./ast/node";
 
 export default class Parser{

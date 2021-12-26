@@ -27,7 +27,7 @@ class UpdateExpression extends Expr{
         if (this.prefix) {
             result = argument + 1;
         }
-        this.argument.changeReference(runtime, result);
+        this.argument.changeRuntime(runtime, result);
         return result;
     }
 }

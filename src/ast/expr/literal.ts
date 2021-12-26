@@ -1,6 +1,7 @@
 import {Expr} from "../node";
 import {Runtime} from "../../runtime";
-import {Literal} from "../ast";
+
+type Literal = boolean|null|number|string;
 
 class LiteralExpression extends Expr{
     private readonly value: Literal;
