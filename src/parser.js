@@ -64,9 +64,6 @@ class Parser{
 
     parseExpression(){
         let expr = this.parsePrimaryExpression();
-        if (this.tokens.current().testAny(TokenType.T_INC, TokenType.T_DEC)) {// unary operator
-            expr = this.parseUpdateExpression(false, expr);
-        }
         if (this.tokens.current().isBinaryOperator()) {
             expr = this.parseBinaryExpression(expr);
         }
@@ -131,7 +128,11 @@ class Parser{
                     expr = this.parseAccessExpression(token, expr);
                      break;
                 default:
-                    end = true;
+                    if (this.tokens.current().testAny(TokenType.T_INC, TokenType.T_DEC)) {// unary operator
+                        expr = this.parseUpdateExpression(false, expr);
+                    } else {
+                        end = true;
+                    }
             }
             if (end) {
                 break;
