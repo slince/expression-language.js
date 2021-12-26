@@ -1,44 +1,45 @@
 import {SyntaxError} from "./errors.js";
+import Position from "./position";
 
 // token type enum
-const TokenType = {
-    T_EOF: 0, // eof
-    T_STR: 1, // abc
-    T_NUM: 2, // 123
-    T_ID: 3, // foo
-    T_ADD: 4, // +
-    T_SUB: 5, // -
-    T_MUL: 6, // *
-    T_DIV: 7, // /
-    T_MOD: 8, // %
-    T_INC: 9, // ++
-    T_DEC: 10, // --
-    T_NOT: 11, // !
-    T_NEQ: 12, // !=
-    T_LEA: 13, // &
-    T_AND: 14, // &&
-    T_OR: 15, // ||
-    T_ASSIGN: 16, // =
-    T_GT: 17, // >
-    T_GE: 18, // >=
-    T_LT: 19, // <
-    T_LE: 20, // <=
-    T_EQ: 21, // ==
-    T_LPAREN: 22, // (
-    T_LBRACKET: 23, // [
-    T_LBRACE: 24, // {
-    T_RPAREN: 25,  // )
-    T_RBRACKET: 26,   // ]
-    T_RBRACE: 27,    // }
-    T_COMMA: 28, // ,
-    T_COLON: 29, // :
-    T_SEMICOLON: 30, // ;
-    T_DOT: 31, // .
-    T_QUESTION_MARK: 32, // ?
-};
+export const enum TokenType {
+    T_EOF= 0, // eof
+    T_STR= 1, // abc
+    T_NUM= 2, // 123
+    T_ID= 3, // foo
+    T_ADD= 4, // +
+    T_SUB= 5, // -
+    T_MUL= 6, // *
+    T_DIV= 7, // /
+    T_MOD= 8, // %
+    T_INC= 9, // ++
+    T_DEC= 10, // --
+    T_NOT= 11, // !
+    T_NEQ= 12, // !=
+    T_LEA= 13, // &
+    T_AND= 14, // &&
+    T_OR= 15, // ||
+    T_ASSIGN= 16, // =
+    T_GT= 17, // >
+    T_GE= 18, // >=
+    T_LT= 19, // <
+    T_LE= 20, // <=
+    T_EQ= 21, // ==
+    T_LPAREN= 22, // (
+    T_LBRACKET= 23, // [
+    T_LBRACE= 24, // {
+    T_RPAREN= 25,  // )
+    T_RBRACKET= 26,   // ]
+    T_RBRACE= 27,    // }
+    T_COMMA= 28, // ,
+    T_COLON= 29, // =
+    T_SEMICOLON= 30, // ;
+    T_DOT= 31, // .
+    T_QUESTION_MARK= 32, // ?
+}
 
 // token name
-const Tokens = {};
+export const Tokens = {};
 Tokens[TokenType.T_EOF] = 'eof';
 Tokens[TokenType.T_STR] = 'string';
 Tokens[TokenType.T_NUM] = 'number';
@@ -110,37 +111,42 @@ const unaryOperators = {
     '++': {'precedence': 500},
 };
 
-class Token{
-    constructor(type, value, position) {
+export class Token{
+    type: TokenType;
+    value: string;
+    position: Position;
+
+    constructor(type: TokenType, value: string, position: Position) {
         this.type = type;
         this.value = value;
         this.position = position;
     }
 
-    test(type){
+    // test whether the token match the given token type
+    test(type: TokenType){
         return this.type === type;
     }
 
-    testAny(...types){
+    testAny(...types: TokenType[]){
         return types.indexOf(this.type) > -1;
     }
 
-    isBinaryOperator(){
+    isBinaryOperator(): boolean{
         return typeof binaryOperators[Tokens[this.type]] !== 'undefined';
     }
 
-    getBinaryPrecedence(){
+    getBinaryPrecedence(): number{
         if (this.isBinaryOperator()) {
             return binaryOperators[Tokens[this.type]].precedence;
         }
         return -1;
     }
 
-    isUnaryOperator(){
+    isUnaryOperator(): boolean{
         return typeof unaryOperators[Tokens[this.type]] !== 'undefined';
     }
 
-    getUnaryPrecedence(){
+    getUnaryPrecedence(): number{
         if (this.isBinaryOperator()) {
             return unaryOperators[Tokens[this.type]].precedence;
         }
@@ -148,30 +154,32 @@ class Token{
     }
 }
 
-class TokenStream{
+export class TokenStream{
+    index: number;
+    tokens: Token[];
 
     constructor() {
         this.index = 0;
         this.tokens = [];
     }
 
-    add(token){
+    add(token: Token){
         this.tokens.push(token);
     }
 
-    current(){
+    current(): Token{
         return this.tokens[this.index];
     }
 
-    next(){
+    next(): Token{
         return this.tokens[this.index ++]
     }
 
-    look(number){
+    look(number?: number): Token{
         return this.tokens[this.index + (number || 1)];
     }
 
-    expect(type, message) {
+    expect(type: TokenType, message?: string): Token {
         const token = this.current();
         const value = Tokens[type];
         if (!token.test(type)) {
@@ -182,7 +190,7 @@ class TokenStream{
         return token;
     }
 
-    expectOneOf(...types) {
+    expectOneOf(...types: TokenType[]) {
         const token = this.current();
         if (!token.testAny(...types)) {
             const values = types.map((type)=>Tokens[type] || '');
@@ -193,9 +201,7 @@ class TokenStream{
         return token;
     }
 
-    eof(){
+    eof(): boolean{
         return this.tokens[this.index].type === TokenType.T_EOF;
     }
 }
-
-export {TokenType, Tokens, Token, TokenStream}

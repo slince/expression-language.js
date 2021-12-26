@@ -1,11 +1,16 @@
-import Position from "./position.js";
-import {Token, Tokens, TokenStream, TokenType} from "./token.js";
-import Utils from "./utils.js"
-import {SyntaxError} from "./errors.js";
+import Position from "./position";
+import {Token, Tokens, TokenStream, TokenType} from "./token";
+import Utils from "./utils"
+import {SyntaxError} from "./errors";
 
-class Lexer{
+export default class Lexer{
+    private readonly source: string;
+    private readonly end: number;
+    private offset: number;
+    private line: number;
+    private column: number;
 
-    constructor(source) {
+    constructor(source: string) {
         // original string
         this.source = source;
         this.end = this.source.length;
@@ -17,7 +22,7 @@ class Lexer{
         this.column = 0;
     }
 
-    lex(){
+    lex(): TokenStream{
         const tokens = new TokenStream();
         let token;
         while (!this.eof()) {
@@ -48,7 +53,7 @@ class Lexer{
         return tokens;
     }
 
-    lexPunctuation(position){
+    private lexPunctuation(position: Position){
         let type, next;
         let ch = this.current()
         switch (ch) {
@@ -162,7 +167,7 @@ class Lexer{
         return new Token(type, Tokens[type], position);
     }
 
-    readNumber(){
+    private readNumber(): string{
         let isFloat = false;
         return this.readIf((ch)=>{
             if (ch === ".") {
@@ -176,7 +181,7 @@ class Lexer{
         });
     }
 
-    readString(beginChar){
+    private readString(beginChar: string): string{
         this.next(); // skip first ' or "
         const buffer = this.readIf((ch)=>{
             return ch !== beginChar;
@@ -185,13 +190,13 @@ class Lexer{
         return buffer;
     }
 
-    readIdentifier(){
+    private readIdentifier(): string{
         return this.readIf((ch)=>{
             return Utils.isIdentifier(ch);
         });
     }
 
-    readIf(predicate){
+    private readIf(predicate: Function): string{
         const buffer = [];
         while (!this.eof()) {
             const ch = this.next();
@@ -205,7 +210,7 @@ class Lexer{
         return buffer.join('');
     }
 
-    next() {
+    private next(): string{
         const ch = this.source.charAt(this.offset ++);
         if (ch === "\n") {
             this.line ++;
@@ -216,21 +221,19 @@ class Lexer{
         return ch;
     }
 
-    look(){
+    private look(): string{
         return this.source.charAt(this.offset + 1);
     }
 
-    current(){
+    private current(): string{
         return this.source.charAt(this.offset);
     }
 
-    eof(){
+    private eof(): boolean{
         return this.current() === '';
     }
 
-    position(){
+    private position(): Position{
         return new Position(this.offset, this.line, this.column);
     }
 }
-
-export default Lexer;

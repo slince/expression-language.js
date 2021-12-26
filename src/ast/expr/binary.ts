@@ -1,9 +1,14 @@
-import Expr from "../expr.js";
-import {RuntimeError} from "../../errors.js";
+import {Expr} from "../node";
+import {RuntimeError} from "../../errors";
+import Position from "../../position";
+import {Runtime} from "../../runtime";
 
 class BinaryExpression extends Expr{
+    private readonly left: Expr;
+    private readonly operator: string;
+    private readonly right: Expr;
 
-    constructor(left, operator, right, position) {
+    constructor(left: Expr, operator: string, right: Expr, position: Position) {
         super(position);
         this.type = 'BinaryExpression';
         this.left = left;
@@ -11,7 +16,7 @@ class BinaryExpression extends Expr{
         this.right = right;
     }
 
-    evaluate(runtime) {
+    evaluate(runtime: Runtime): any{
         const left = this.left.evaluate(runtime);
         const right = this.right.evaluate(runtime);
         let result;
@@ -86,7 +91,6 @@ class BinaryExpression extends Expr{
                 result = left % right;
                 break;
         }
-        // console.log(this.right);
         return result;
     }
 }

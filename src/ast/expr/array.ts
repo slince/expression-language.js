@@ -1,21 +1,25 @@
-import Expr from "../expr.js";
+import {Expr} from "../node";
+import Position from "../../position";
+import {Runtime} from "../../runtime";
 
 class ArrayExpression extends Expr{
-    constructor(elements, position) {
+    private readonly elements: Expr[];
+
+    constructor(elements: Expr[], position: Position) {
         super(position);
         this.type = 'ArrayExpression';
         this.elements = elements || [];
     }
 
-    addElement(element){
+    addElement(element: Expr): void{
         this.elements.push(element);
     }
 
-    isEmpty(){
+    isEmpty(): boolean{
         return this.elements.length === 0;
     }
 
-    evaluate(runtime) {
+    evaluate(runtime: Runtime): any {
         return this.elements.map(element => element.evaluate(runtime));
     }
 }

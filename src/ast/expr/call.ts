@@ -1,13 +1,18 @@
-import Expr from "../expr.js";
+import {Expr} from "../node";
+import Position from "../../position";
+import {Runtime} from "../../runtime";
 
 class CallExpression extends Expr{
-    constructor(callee, args, position) {
+    private readonly callee: Expr;
+    private readonly args: Expr[];
+
+    constructor(callee: Expr, args: Expr[], position: Position) {
         super(position);
         this.callee = callee;
         this.args = args;
     }
 
-    evaluate(runtime) {
+    evaluate(runtime: Runtime): any{
         const callee = this.callee.evaluate(runtime);
         const args = this.args.map(arg => arg.evaluate(runtime))
         return callee(args);
