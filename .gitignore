@@ -10,3 +10,4 @@ src/*.js
 src/*/*.js
 src/*/*/*.js
 output
+dts
