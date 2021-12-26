@@ -1,5 +1,5 @@
 
-import "./dist/expression.js";
+import Expression from "./output/expression.js";
 
 const code = `!!+--a`;
 // const code = `++ b + c++`;

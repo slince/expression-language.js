@@ -5,7 +5,7 @@ module.exports = {
         path:  __dirname + "/dist",
         filename: "expression.js",
         libraryTarget: "umd",
-        library: "expression"
+        library: "expression",
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js"]
