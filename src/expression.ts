@@ -1,7 +1,6 @@
 import Lexer from "./lexer";
 import Parser from "./parser";
 import {GenericRuntime, Runtime} from "./runtime";
-import * as stream from "stream";
 
 class Expression{
 

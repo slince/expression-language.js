@@ -1,9 +1,10 @@
-import Evaluator from "./src/expression";
+
+import "./dist/expression.js";
 
 const code = `!!+--a`;
 // const code = `++ b + c++`;
 
-const evaluator = new Evaluator();
+const evaluator = new Expression();
 
 const result = evaluator.parse(code);
 

@@ -15,6 +15,7 @@
     "expression-language"
   ],
   "license": "MIT",
+  "type": "module",
   "devDependencies": {
     "jest": "^27.4.5",
     "ts-loader": "^9.2.6",
