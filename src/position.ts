@@ -3,7 +3,7 @@ export default class Position{
     offset: number;
     column: number;
     line: number;
-    constructor(offset, line, column) {
+    constructor(offset: number, line: number, column: number) {
         this.offset = offset;
         this.line = line;
         this.column = column;

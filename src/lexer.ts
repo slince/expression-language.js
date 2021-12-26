@@ -158,7 +158,7 @@ export default class Lexer{
                 type = TokenType.T_DOT;
                 break;
             case '?':
-                type = TokenType.T_QUESTION_MARK;
+                type = TokenType.T_QUESTION;
                 break;
             default:
                 throw new SyntaxError(`Unrecognized punctuation ${ch}`, position);
@@ -169,7 +169,7 @@ export default class Lexer{
 
     private readNumber(): string{
         let isFloat = false;
-        return this.readIf((ch)=>{
+        return this.readIf((ch: string)=>{
             if (ch === ".") {
                 if (isFloat) {
                     return false;
@@ -183,7 +183,7 @@ export default class Lexer{
 
     private readString(beginChar: string): string{
         this.next(); // skip first ' or "
-        const buffer = this.readIf((ch)=>{
+        const buffer = this.readIf((ch: string)=>{
             return ch !== beginChar;
         });
         this.next(); // skip last ' or "
@@ -191,7 +191,7 @@ export default class Lexer{
     }
 
     private readIdentifier(): string{
-        return this.readIf((ch)=>{
+        return this.readIf((ch: string)=>{
             return Utils.isIdentifier(ch);
         });
     }

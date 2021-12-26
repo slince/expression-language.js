@@ -3,14 +3,9 @@ import Position from "../../position";
 import {Runtime} from "../../runtime";
 import LiteralExpression from "./literal";
 
-class MapEntry{
+interface MapEntry{
     readonly key: LiteralExpression;
     readonly value: any;
-
-    constructor(key: LiteralExpression, value: any) {
-        this.key = key;
-        this.value = value;
-    }
 }
 
 class MapExpression extends Expr{
@@ -23,7 +18,10 @@ class MapExpression extends Expr{
     }
 
     addElement(key: LiteralExpression, value: any){
-        this.entries.push(new MapEntry(key, value));
+        this.entries.push({
+            key: key,
+            value: value
+        });
     }
 
     isEmpty(): boolean{
@@ -31,7 +29,7 @@ class MapExpression extends Expr{
     }
 
     evaluate(runtime: Runtime): {} {
-        const result = {};
+        const result: {[key: string]: any} = {};
         this.entries.forEach(entry => {
            result[entry.key.evaluate(runtime) as string] = entry.value.evaluate(runtime)
         });

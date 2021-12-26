@@ -1,6 +1,7 @@
 import Lexer from "./lexer";
 import Parser from "./parser";
 import {GenericRuntime, Runtime} from "./runtime";
+import * as stream from "stream";
 
 class Expression{
 
@@ -16,7 +17,7 @@ class Expression{
     }
 
     // tokenize source code.
-    lex(source){
+    lex(source: string){
         return Expression.createLexer(source).lex();
     }
 
@@ -27,11 +28,11 @@ class Expression{
         return new GenericRuntime(context);
     }
 
-    private static createParser(source): Parser{
+    private static createParser(source: string): Parser{
         return  new Parser(Expression.createLexer(source).lex());
     }
 
-    private static createLexer(source): Lexer{
+    private static createLexer(source: string): Lexer{
         return new Lexer(source);
     }
 }

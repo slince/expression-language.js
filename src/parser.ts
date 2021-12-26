@@ -196,12 +196,12 @@ export default class Parser{
     doParseBinary(left: Expr): BinaryExpression{
         const token = this.tokens.current();
         const operator = token.value;
-        const currentPrecedence = token.getBinaryPrecedence();
+        const currentPrecedence = token.getBinaryPrecedence().precedence;
 
         // right expr.
         this.tokens.next();
         let right = this.parsePrimaryExpression();
-        const nextPrecedence = this.tokens.current().getBinaryPrecedence();
+        const nextPrecedence = this.tokens.current().getBinaryPrecedence().precedence;
         if (currentPrecedence < nextPrecedence) {
             right = this.doParseBinary(right);
         }

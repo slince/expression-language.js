@@ -1,5 +1,6 @@
 import {Expr, Stmt} from "../node";
 import Position from "../../position";
+import {Runtime} from "../../runtime";
 
 class ExpressionStatement extends Stmt{
     private readonly expr: Expr;
@@ -10,7 +11,7 @@ class ExpressionStatement extends Stmt{
         this.expr = expr;
     }
 
-    evaluate(runtime): any{
+    evaluate(runtime: Runtime): any{
         return this.expr.evaluate(runtime);
     }
 }

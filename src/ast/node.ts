@@ -16,7 +16,7 @@ export class Root implements Node{
     type: string;
     position: Position;
 
-    constructor(position) {
+    constructor(position: Position) {
         this.type = 'Node';
         this.position = position;
     }
@@ -38,7 +38,7 @@ export class Expr extends Root{
 export class Identifier extends Root{
     private readonly value: string;
 
-    constructor(value: string, position) {
+    constructor(value: string, position: Position) {
         super(position);
         this.type = 'Identifier';
         this.value = value;

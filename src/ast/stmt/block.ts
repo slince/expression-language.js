@@ -11,7 +11,7 @@ class BlockStatement extends Stmt{
         this.stmts = stmts;
     }
 
-    evaluate(runtime: Runtime): string {
+    evaluate(runtime: Runtime): any {
         let evaluated; //return last statement.
         this.stmts.forEach((stmt) => {
             evaluated = stmt.evaluate(runtime);

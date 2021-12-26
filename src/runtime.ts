@@ -8,7 +8,7 @@ export class GenericRuntime implements Runtime{
 
     private readonly context: Map<string, any>;
 
-    constructor(context: {}) {
+    constructor(context: {[key: string]: any}) {
         this.context = new Map;
         for (let key in context) {
             this.context.set(key, context[key]);
@@ -16,14 +16,14 @@ export class GenericRuntime implements Runtime{
     }
 
     hasReference(property: string): boolean{
-        return typeof this.context[property] !== 'undefined'
+        return this.context.has(property)
     }
 
     getReference(property: string): boolean{
-        return this.context[property];
+        return this.context.get(property);
     }
 
     setReference(property: string, value: any): void{
-        return this.context[property] = value;
+        this.context.set(property, value);
     }
 }
