@@ -13,7 +13,6 @@ describe('Parser', ()=> {
         expect(obj(expr("hello"))).toStrictEqual({
             type: "VariableExpression",
             value: "hello",
-            raw: "hello",
             position: {
                 column: 0,
                 line: 0,
