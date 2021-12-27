@@ -5,9 +5,15 @@
   "main": "dist/expression.js",
   "author": "slince <taosikai@yeah.net>",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "tsc": "tsc"
   },
-  "files": ["dist"],
+  "files": [
+    "dist",
+    "dts",
+    "README.md",
+    "LICENSE"
+  ],
   "keywords": [
     "lexer",
     "parser",
