@@ -179,24 +179,37 @@ export default class Parser{
         // a + b * c / d
         // a * b + c
         while (this.tokens.current().isBinaryOperator()) {
-            expr = this.doParseBinary(expr);
+            expr = this.doParseBinary(expr, -1);
         }
         return expr as ast.BinaryExpression;
     }
 
-    doParseBinary(left: ast.Expr): ast.BinaryExpression{
-        const token = this.tokens.current();
-        const operator = token.value;
-        const currentPrecedence = token.getBinaryPrecedence().precedence;
+    doParseBinary(left: ast.Expr, prevPrecedence: number): ast.Expr{
 
-        // right expr.
-        this.tokens.next();
-        let right = this.parsePrimaryExpression();
-        const nextPrecedence = this.tokens.current().getBinaryPrecedence().precedence;
-        if (currentPrecedence < nextPrecedence) {
-            right = this.doParseBinary(right);
+        while (this.tokens.current().isBinaryOperator()) {
+            const token = this.tokens.current();
+            const operator = token.value;
+            const currentPrecedence = token.getBinaryPrecedence().precedence;
+
+            // if the current less than prev, don't consume token.
+            if (currentPrecedence < prevPrecedence) {
+                break;
+            }
+
+            // right expr.
+            this.tokens.next();
+            let right = this.parsePrimaryExpression();
+            const nextPrecedence = this.tokens.current().getBinaryPrecedence().precedence;
+
+            if (currentPrecedence < nextPrecedence) {
+                right = this.doParseBinary(right, currentPrecedence);
+            }
+
+            prevPrecedence = currentPrecedence;
+            left = new ast.BinaryExpression(left, operator, right, left.position);
         }
-        return new ast.BinaryExpression(left, operator, right, left.position);
+
+        return left;
     }
 
     parseUnaryExpression(): ast.UnaryExpression{
@@ -208,7 +221,7 @@ export default class Parser{
         return new ast.UnaryExpression(operator, argument, token.position);
     }
 
-    parseUpdateExpression(prefix: boolean, argument ?: ast.Expr): ast.UpdateExpression {
+    parseUpdateExpression(prefix: boolean, argument?: ast.Expr): ast.UpdateExpression {
         const token = this.tokens.expectOneOf(TokenType.T_INC, TokenType.T_DEC);
         if (prefix) {  // ++a ++a.b ++a.read()
             // ++ a + 1
