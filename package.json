@@ -6,7 +6,8 @@
   "author": "slince <taosikai@yeah.net>",
   "scripts": {
     "test": "jest",
-    "tsc": "tsc"
+    "tsc": "tsc --noEmit",
+    "build": "rollup --config rollup.config.js"
   },
   "files": [
     "dist",
@@ -24,6 +25,8 @@
   "license": "MIT",
   "type": "module",
   "devDependencies": {
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-typescript": "^8.3.0",
     "jest": "^27.4.5",
     "ts-loader": "^9.2.6",
     "ts-node": "^10.4.0",
