@@ -10,6 +10,7 @@ class MemberExpression extends Expr implements RuntimeChanger{
 
     constructor(object: Expr, property: Identifier, computed: boolean, position: Position) {
         super(position);
+        this.type = "MemberExpression";
         this.object = object;
         this.property = property;
         this.computed = computed;

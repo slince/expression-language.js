@@ -8,6 +8,7 @@ class CallExpression extends Expr{
 
     constructor(callee: Expr, args: Expr[], position: Position) {
         super(position);
+        this.type = "CallExpression";
         this.callee = callee;
         this.args = args;
     }
