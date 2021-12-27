@@ -22,10 +22,12 @@ class BinaryExpression extends Expr{
         let result;
         switch (this.operator) {
             case '||':
+            case 'or':
                 result = left || right
                 break;
             case '&&':
-                result = left && result;
+            case 'and':
+                result = left && right;
                 break;
             case '|':
                 result = left | right;

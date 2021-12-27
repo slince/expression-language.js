@@ -103,6 +103,14 @@
     Tokens[30 /* T_SEMICOLON */] = ';';
     Tokens[31 /* T_DOT */] = '.';
     Tokens[32 /* T_QUESTION */] = '?';
+    // keywords
+    Tokens[34 /* T_KW_OR */] = 'or';
+    Tokens[35 /* T_KW_AND */] = 'and';
+    // list all keywords.
+    var keywords = {
+        'or': 34 /* T_KW_OR */,
+        'and': 35 /* T_KW_AND */
+    };
     var defaultOperatorPrecedence = {
         precedence: -1
     };
@@ -130,6 +138,18 @@
         '/': { 'precedence': 60, 'associativity': 1 /* Left */ },
         '%': { 'precedence': 60, 'associativity': 1 /* Left */ },
         '**': { 'precedence': 200, 'associativity': 2 /* Right */ },
+    };
+    // keyword utils.
+    var Keyword = {
+        lookup: function (identifier) {
+            if (typeof keywords[identifier] !== 'undefined') {
+                return keywords[identifier];
+            }
+            return 3 /* T_ID */;
+        },
+        isKeyword: function (type) {
+            return 33 /* T_KW_BEGIN */ < type && type < 36 /* T_KW_END */;
+        }
     };
     var Token = /** @class */ (function () {
         function Token(type, value, position) {
@@ -250,7 +270,9 @@
                         token = new Token(1 /* T_STR */, this.readString(ch), position);
                         break;
                     case Utils.isLetter(ch):
-                        token = new Token(3 /* T_ID */, this.readIdentifier(), position);
+                        var identifier = this.readIdentifier();
+                        var type = Keyword.lookup(identifier);
+                        token = new Token(type, identifier, position);
                         break;
                     default:
                         token = this.lexPunctuation(position);
@@ -558,10 +580,12 @@
             var result;
             switch (this.operator) {
                 case '||':
+                case 'or':
                     result = left || right;
                     break;
                 case '&&':
-                    result = left && result;
+                case 'and':
+                    result = left && right;
                     break;
                 case '|':
                     result = left | right;
@@ -766,11 +790,8 @@
         UpdateExpression.prototype.evaluate = function (runtime) {
             // force convert to number; not assert
             var argument = Number(this.argument.evaluate(runtime));
-            var result = argument;
-            if (this.prefix) {
-                result = argument + 1;
-            }
-            this.argument.changeRuntime(runtime, result);
+            var result = this.prefix ? argument + 1 : argument;
+            this.argument.changeRuntime(runtime, argument + 1);
             return result;
         };
         return UpdateExpression;

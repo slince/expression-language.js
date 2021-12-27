@@ -1,5 +1,5 @@
 import Position from "./position";
-import {Token, Tokens, TokenStream, TokenType} from "./token";
+import {Keyword, Token, Tokens, TokenStream, TokenType} from "./token";
 import Utils from "./utils"
 import {SyntaxError} from "./errors";
 
@@ -42,7 +42,9 @@ export default class Lexer{
                     token = new Token(TokenType.T_STR, this.readString(ch), position);
                     break;
                 case Utils.isLetter(ch):
-                    token = new Token(TokenType.T_ID, this.readIdentifier(), position);
+                    const identifier = this.readIdentifier();
+                    const type = Keyword.lookup(identifier);
+                    token = new Token(type, identifier, position);
                     break;
                 default:
                     token = this.lexPunctuation(position);

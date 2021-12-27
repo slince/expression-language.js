@@ -23,11 +23,8 @@ class UpdateExpression extends Expr{
     evaluate(runtime: Runtime): number {
         // force convert to number; not assert
         const argument = Number(this.argument.evaluate(runtime));
-        let result = argument;
-        if (this.prefix) {
-            result = argument + 1;
-        }
-        this.argument.changeRuntime(runtime, result);
+        const result = this.prefix ? argument + 1 : argument;
+        this.argument.changeRuntime(runtime, argument + 1);
         return result;
     }
 }

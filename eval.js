@@ -3,7 +3,7 @@ import {Evaluator} from "./dist/expression.mjs";
 
 
 // const code = `!!+--a`;
-const code = `++ b + c++;c`;
+const code = `d = 10; d + 2`;
 
 const evaluator = new Evaluator();
 

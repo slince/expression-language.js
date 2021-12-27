@@ -36,6 +36,10 @@ export const enum TokenType {
     T_SEMICOLON, // ;
     T_DOT, // .
     T_QUESTION, // ?
+    T_KW_BEGIN,
+    T_KW_OR, // or
+    T_KW_AND, // and
+    T_KW_END
 }
 
 // token name
@@ -74,8 +78,17 @@ Tokens[TokenType.T_COLON] = ':';
 Tokens[TokenType.T_SEMICOLON] = ';';
 Tokens[TokenType.T_DOT] = '.';
 Tokens[TokenType.T_QUESTION] = '?'
+// keywords
+Tokens[TokenType.T_KW_OR] = 'or'
+Tokens[TokenType.T_KW_AND] = 'and'
 
+// list all keywords.
+const keywords: {[key: string]: TokenType} = {
+    'or': TokenType.T_KW_OR,
+    'and': TokenType.T_KW_AND
+};
 
+// binary & unary
 const enum OperatorAssociativity {
     Left = 1,
     Right = 2
@@ -123,6 +136,19 @@ const unaryOperators: {[key: string]: OperatorPrecedence} = {
     '+': {'precedence': 500},
     '--': {'precedence': 500},
     '++': {'precedence': 500},
+};
+
+// keyword utils.
+export const Keyword = {
+    lookup: function(identifier: string): TokenType {
+        if (typeof keywords[identifier] !== 'undefined') {
+            return keywords[identifier];
+        }
+        return TokenType.T_ID;
+    },
+    isKeyword(type: TokenType): boolean{
+        return TokenType.T_KW_BEGIN < type && type < TokenType.T_KW_END
+    }
 };
 
 export class Token{
