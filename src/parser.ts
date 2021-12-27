@@ -232,13 +232,14 @@ export default class Parser{
     parseArrayExpression(): ast.ArrayExpression {
         const token = this.tokens.current();
         const expr = new ast.ArrayExpression ([], token.position);
+        this.tokens.expect(TokenType.T_LBRACKET, 'An array must begin with an opening brackets');
         while (!this.tokens.current().test(TokenType.T_RBRACKET)) {
             if (!expr.isEmpty()) {
                 this.tokens.expect(TokenType.T_COMMA, 'An array element must be followed by a comma');
             }
             expr.addElement(this.parseExpression());
         }
-        this.tokens.expect(TokenType.T_RBRACKET, 'An array element must be closed by a brackets');
+        this.tokens.expect(TokenType.T_RBRACKET, 'An array must be closed by a brackets');
         return expr;
     }
 

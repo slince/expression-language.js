@@ -79,37 +79,45 @@
     Tokens[6 /* T_MUL */] = '*';
     Tokens[7 /* T_DIV */] = '/';
     Tokens[8 /* T_MOD */] = '%';
-    Tokens[9 /* T_INC */] = '++';
-    Tokens[10 /* T_DEC */] = '--';
-    Tokens[11 /* T_NOT */] = '!';
-    Tokens[12 /* T_NEQ */] = '!=';
-    Tokens[13 /* T_LEA */] = '&';
-    Tokens[14 /* T_AND */] = '&&';
-    Tokens[15 /* T_OR */] = '||';
-    Tokens[16 /* T_ASSIGN */] = '=';
-    Tokens[17 /* T_GT */] = '>';
-    Tokens[18 /* T_GE */] = '>=';
-    Tokens[19 /* T_LT */] = '<';
-    Tokens[20 /* T_LE */] = '<=';
-    Tokens[21 /* T_EQ */] = '==';
-    Tokens[22 /* T_LPAREN */] = '(';
-    Tokens[23 /* T_LBRACKET */] = '[';
-    Tokens[24 /* T_LBRACE */] = '{';
-    Tokens[25 /* T_RPAREN */] = ')';
-    Tokens[26 /* T_RBRACKET */] = ']';
-    Tokens[27 /* T_RBRACE */] = '}';
-    Tokens[28 /* T_COMMA */] = ',';
-    Tokens[29 /* T_COLON */] = ':';
-    Tokens[30 /* T_SEMICOLON */] = ';';
-    Tokens[31 /* T_DOT */] = '.';
-    Tokens[32 /* T_QUESTION */] = '?';
+    Tokens[9 /* T_AMP */] = '&';
+    Tokens[10 /* T_PIPE */] = '|';
+    Tokens[11 /* T_XOR */] = '^';
+    Tokens[12 /* T_SHL */] = '<<';
+    Tokens[13 /* T_SHR */] = '>>';
+    Tokens[14 /* T_INC */] = '++';
+    Tokens[15 /* T_DEC */] = '--';
+    Tokens[16 /* T_NOT */] = '!';
+    Tokens[17 /* T_NEQ */] = '!=';
+    Tokens[18 /* T_AND */] = '&&';
+    Tokens[19 /* T_OR */] = '||';
+    Tokens[20 /* T_ASSIGN */] = '=';
+    Tokens[21 /* T_GT */] = '>';
+    Tokens[22 /* T_GE */] = '>=';
+    Tokens[23 /* T_LT */] = '<';
+    Tokens[24 /* T_LE */] = '<=';
+    Tokens[25 /* T_EQ */] = '==';
+    Tokens[26 /* T_LPAREN */] = '(';
+    Tokens[27 /* T_LBRACKET */] = '[';
+    Tokens[28 /* T_LBRACE */] = '{';
+    Tokens[29 /* T_RPAREN */] = ')';
+    Tokens[30 /* T_RBRACKET */] = ']';
+    Tokens[31 /* T_RBRACE */] = '}';
+    Tokens[32 /* T_COMMA */] = ',';
+    Tokens[33 /* T_COLON */] = ':';
+    Tokens[34 /* T_SEMICOLON */] = ';';
+    Tokens[35 /* T_DOT */] = '.';
+    Tokens[36 /* T_QUESTION */] = '?';
     // keywords
-    Tokens[34 /* T_KW_OR */] = 'or';
-    Tokens[35 /* T_KW_AND */] = 'and';
+    Tokens[38 /* T_KW_NOT */] = 'not';
+    Tokens[39 /* T_KW_OR */] = 'or';
+    Tokens[40 /* T_KW_AND */] = 'and';
+    Tokens[41 /* T_KW_IN */] = 'in';
     // list all keywords.
     var keywords = {
-        'or': 34 /* T_KW_OR */,
-        'and': 35 /* T_KW_AND */
+        'not': 38 /* T_KW_NOT */,
+        'or': 39 /* T_KW_OR */,
+        'and': 40 /* T_KW_AND */,
+        'in': 41 /* T_KW_IN */,
     };
     var defaultOperatorPrecedence = {
         precedence: -1
@@ -130,14 +138,14 @@
         '<=': { 'precedence': 20, 'associativity': 1 /* Left */ },
         'not in': { 'precedence': 20, 'associativity': 1 /* Left */ },
         'in': { 'precedence': 20, 'associativity': 1 /* Left */ },
-        '..': { 'precedence': 25, 'associativity': 1 /* Left */ },
+        '<<': { 'precedence': 25, 'associativity': 1 /* Left */ },
+        '>>': { 'precedence': 25, 'associativity': 1 /* Left */ },
         '+': { 'precedence': 30, 'associativity': 1 /* Left */ },
         '-': { 'precedence': 30, 'associativity': 1 /* Left */ },
         '~': { 'precedence': 40, 'associativity': 1 /* Left */ },
         '*': { 'precedence': 60, 'associativity': 1 /* Left */ },
         '/': { 'precedence': 60, 'associativity': 1 /* Left */ },
         '%': { 'precedence': 60, 'associativity': 1 /* Left */ },
-        '**': { 'precedence': 200, 'associativity': 2 /* Right */ },
     };
     // keyword utils.
     var Keyword = {
@@ -148,7 +156,7 @@
             return 3 /* T_ID */;
         },
         isKeyword: function (type) {
-            return 33 /* T_KW_BEGIN */ < type && type < 36 /* T_KW_END */;
+            return 37 /* T_KW_BEGIN */ < type && type < 42 /* T_KW_END */;
         }
     };
     var Token = /** @class */ (function () {
@@ -287,42 +295,50 @@
             var ch = this.current();
             switch (ch) {
                 case '=':
-                    type = 16 /* T_ASSIGN */;
+                    type = 20 /* T_ASSIGN */;
                     next = this.look();
                     if (next === '=') {
-                        type = 21 /* T_EQ */;
+                        type = 25 /* T_EQ */;
                         this.next();
                     }
                     break;
                 case '!':
-                    type = 11 /* T_NOT */;
+                    type = 16 /* T_NOT */;
                     next = this.look();
                     if (next === '=') {
-                        type = 12 /* T_NEQ */;
+                        type = 17 /* T_NEQ */;
                         this.next();
                     }
                     break;
                 case '<':
-                    type = 19 /* T_LT */;
+                    type = 23 /* T_LT */;
                     next = this.look();
                     if (next === '=') {
-                        type = 20 /* T_LE */;
+                        type = 24 /* T_LE */;
+                        this.next();
+                    }
+                    else if (next === '<') {
+                        type = 12 /* T_SHL */;
                         this.next();
                     }
                     break;
                 case '>':
-                    type = 17 /* T_GT */;
+                    type = 21 /* T_GT */;
                     next = this.look();
                     if (next === '=') {
-                        type = 18 /* T_GE */;
+                        type = 22 /* T_GE */;
+                        this.next();
+                    }
+                    else if (next === '>') {
+                        type = 13 /* T_SHR */;
                         this.next();
                     }
                     break;
                 case '&':
-                    type = 13 /* T_LEA */;
+                    type = 9 /* T_AMP */;
                     next = this.look();
                     if (next === '&') {
-                        type = 14 /* T_AND */;
+                        type = 18 /* T_AND */;
                         this.next();
                     }
                     break;
@@ -330,7 +346,7 @@
                     type = 4 /* T_ADD */;
                     next = this.look();
                     if (next === '+') {
-                        type = 9 /* T_INC */;
+                        type = 14 /* T_INC */;
                         this.next();
                     }
                     break;
@@ -338,7 +354,7 @@
                     type = 5 /* T_SUB */;
                     next = this.look();
                     if (next === '-') {
-                        type = 10 /* T_DEC */;
+                        type = 15 /* T_DEC */;
                         this.next();
                     }
                     break;
@@ -351,38 +367,44 @@
                 case '%':
                     type = 8 /* T_MOD */;
                     break;
+                case '|':
+                    type = 10 /* T_PIPE */;
+                    break;
+                case '^':
+                    type = 11 /* T_XOR */;
+                    break;
                 case '(':
-                    type = 22 /* T_LPAREN */;
+                    type = 26 /* T_LPAREN */;
                     break;
                 case '[':
-                    type = 23 /* T_LBRACKET */;
+                    type = 27 /* T_LBRACKET */;
                     break;
                 case '{':
-                    type = 24 /* T_LBRACE */;
+                    type = 28 /* T_LBRACE */;
                     break;
                 case ')':
-                    type = 25 /* T_RPAREN */;
+                    type = 29 /* T_RPAREN */;
                     break;
                 case ']':
-                    type = 26 /* T_RBRACKET */;
+                    type = 30 /* T_RBRACKET */;
                     break;
                 case '}':
-                    type = 27 /* T_RBRACE */;
+                    type = 31 /* T_RBRACE */;
                     break;
                 case ',':
-                    type = 28 /* T_COMMA */;
+                    type = 32 /* T_COMMA */;
                     break;
                 case ':':
-                    type = 29 /* T_COLON */;
+                    type = 33 /* T_COLON */;
                     break;
                 case ';':
-                    type = 30 /* T_SEMICOLON */;
+                    type = 34 /* T_SEMICOLON */;
                     break;
                 case '.':
-                    type = 31 /* T_DOT */;
+                    type = 35 /* T_DOT */;
                     break;
                 case '?':
-                    type = 32 /* T_QUESTION */;
+                    type = 36 /* T_QUESTION */;
                     break;
                 default:
                     throw new SyntaxError("Unrecognized punctuation ".concat(ch), position);
@@ -760,6 +782,7 @@
                     result = this.argument.evaluate(runtime);
                     break;
                 case '!':
+                case 'not':
                     result = !Boolean(this.argument.evaluate(runtime));
                     break;
                 case '+':
@@ -832,17 +855,17 @@
         Parser.prototype.parseStatement = function () {
             var token = this.tokens.current();
             var stmt;
-            if (token.test(3 /* T_ID */) && this.tokens.look().test(16 /* T_ASSIGN */)) {
+            if (token.test(3 /* T_ID */) && this.tokens.look().test(20 /* T_ASSIGN */)) {
                 stmt = this.parseAssignStatement();
             }
-            else if (token.test(24 /* T_LBRACE */) && !this.tokens.look().test(27 /* T_RBRACE */) && !this.tokens.look(2).test(29 /* T_COLON */)) {
+            else if (token.test(28 /* T_LBRACE */) && !this.tokens.look().test(31 /* T_RBRACE */) && !this.tokens.look(2).test(33 /* T_COLON */)) {
                 stmt = this.parseBlockStatement();
             }
             else {
                 stmt = new ExpressionStatement(this.parseExpression(), token.position);
             }
             if (!this.tokens.current().test(0 /* T_EOF */)) {
-                this.tokens.expect(30 /* T_SEMICOLON */);
+                this.tokens.expect(34 /* T_SEMICOLON */);
             }
             return stmt;
         };
@@ -850,17 +873,17 @@
             var token = this.tokens.current();
             var variable = new Identifier(token.value, token.position);
             this.tokens.next();
-            this.tokens.expect(16 /* T_ASSIGN */);
+            this.tokens.expect(20 /* T_ASSIGN */);
             return new AssignStatement(variable, this.parseExpression(), token.position);
         };
         Parser.prototype.parseBlockStatement = function () {
-            this.tokens.expect(24 /* T_LBRACE */, 'A block must begin with an opening braces');
+            this.tokens.expect(28 /* T_LBRACE */, 'A block must begin with an opening braces');
             var token = this.tokens.current();
             var stmts = [];
-            while (!this.tokens.current().test(27 /* T_RBRACE */)) {
+            while (!this.tokens.current().test(31 /* T_RBRACE */)) {
                 stmts.push(this.parseStatement());
             }
-            this.tokens.expect(27 /* T_RBRACE */, 'A block must be closed by a braces');
+            this.tokens.expect(31 /* T_RBRACE */, 'A block must be closed by a braces');
             return new BlockStatement(stmts, token.position);
         };
         Parser.prototype.parseExpression = function () {
@@ -888,21 +911,22 @@
                     expr = this.parseIdentifierExpression();
                     break;
                 // punctuation
-                case 23 /* T_LBRACKET */:
+                case 27 /* T_LBRACKET */:
                     expr = this.parseArrayExpression();
                     break;
-                case 24 /* T_LBRACE */:
+                case 28 /* T_LBRACE */:
                     expr = this.parseMapExpression();
                     break;
-                case 22 /* T_LPAREN */:
+                case 26 /* T_LPAREN */:
                     expr = this.parseParenExpression();
                     break;
                 // unary operator
-                case 9 /* T_INC */:
-                case 10 /* T_DEC */:
+                case 14 /* T_INC */:
+                case 15 /* T_DEC */:
                     expr = this.parseUpdateExpression(true);
                     break;
-                case 11 /* T_NOT */:
+                case 16 /* T_NOT */:
+                case 38 /* T_KW_NOT */:
                 case 4 /* T_ADD */:
                 case 5 /* T_SUB */:
                     expr = this.parseUnaryExpression();
@@ -917,17 +941,17 @@
                 var token = this.tokens.current();
                 var end = false;
                 switch (token.type) {
-                    case 22 /* T_LPAREN */:
+                    case 26 /* T_LPAREN */:
                         expr = new CallExpression(expr, this.parseArguments(), token.position);
                         break;
-                    case 31 /* T_DOT */:
+                    case 35 /* T_DOT */:
                         expr = this.parseObjectExpression(expr);
                         break;
-                    case 23 /* T_LBRACKET */: // array[1] , map['property']
+                    case 27 /* T_LBRACKET */: // array[1] , map['property']
                         expr = this.parseAccessExpression(expr);
                         break;
                     default:
-                        if (this.tokens.current().testAny(9 /* T_INC */, 10 /* T_DEC */)) { // unary operator
+                        if (this.tokens.current().testAny(14 /* T_INC */, 15 /* T_DEC */)) { // unary operator
                             expr = this.parseUpdateExpression(false, expr);
                         }
                         else {
@@ -963,19 +987,19 @@
             return expr;
         };
         Parser.prototype.parseObjectExpression = function (object) {
-            this.tokens.expect(31 /* T_DOT */);
+            this.tokens.expect(35 /* T_DOT */);
             var token = this.tokens.expect(3 /* T_ID */);
             var property = new Identifier(token.value, token.position);
             var expr = new MemberExpression(object, property, false, object.position);
-            if (this.tokens.current().test(22 /* T_LPAREN */)) { // method
+            if (this.tokens.current().test(26 /* T_LPAREN */)) { // method
                 expr = new CallExpression(expr, this.parseArguments(), object.position);
             }
             return expr;
         };
         Parser.prototype.parseAccessExpression = function (object) {
-            this.tokens.expect(23 /* T_LBRACKET */);
+            this.tokens.expect(27 /* T_LBRACKET */);
             var property = this.parseExpression();
-            this.tokens.expect(26 /* T_RBRACKET */);
+            this.tokens.expect(30 /* T_RBRACKET */);
             return new MemberExpression(object, property, false, object.position);
         };
         Parser.prototype.parseBinaryExpression = function (expr) {
@@ -1008,7 +1032,7 @@
             return new UnaryExpression(operator, argument, token.position);
         };
         Parser.prototype.parseUpdateExpression = function (prefix, argument) {
-            var token = this.tokens.expectOneOf(9 /* T_INC */, 10 /* T_DEC */);
+            var token = this.tokens.expectOneOf(14 /* T_INC */, 15 /* T_DEC */);
             if (prefix) { // ++a ++a.b ++a.read()
                 // ++ a + 1
                 // a + b --
@@ -1020,50 +1044,51 @@
             return new UpdateExpression(token.value, argument, prefix, prefix ? token.position : argument.position);
         };
         Parser.prototype.parseParenExpression = function () {
-            this.tokens.expect(22 /* T_LPAREN */);
+            this.tokens.expect(26 /* T_LPAREN */);
             var expr = this.parseExpression();
-            this.tokens.expect(25 /* T_RPAREN */);
+            this.tokens.expect(29 /* T_RPAREN */);
             return expr;
         };
         Parser.prototype.parseArrayExpression = function () {
             var token = this.tokens.current();
             var expr = new ArrayExpression([], token.position);
-            while (!this.tokens.current().test(26 /* T_RBRACKET */)) {
+            this.tokens.expect(27 /* T_LBRACKET */, 'An array must begin with an opening brackets');
+            while (!this.tokens.current().test(30 /* T_RBRACKET */)) {
                 if (!expr.isEmpty()) {
-                    this.tokens.expect(28 /* T_COMMA */, 'An array element must be followed by a comma');
+                    this.tokens.expect(32 /* T_COMMA */, 'An array element must be followed by a comma');
                 }
                 expr.addElement(this.parseExpression());
             }
-            this.tokens.expect(26 /* T_RBRACKET */, 'An array element must be closed by a brackets');
+            this.tokens.expect(30 /* T_RBRACKET */, 'An array must be closed by a brackets');
             return expr;
         };
         Parser.prototype.parseMapExpression = function () {
             var token = this.tokens.current();
-            this.tokens.expect(24 /* T_LBRACE */, 'A map must begin with an opening braces');
+            this.tokens.expect(28 /* T_LBRACE */, 'A map must begin with an opening braces');
             var expr = new MapExpression([], token.position);
-            while (!this.tokens.current().test(27 /* T_RBRACE */)) {
+            while (!this.tokens.current().test(31 /* T_RBRACE */)) {
                 if (!expr.isEmpty()) {
-                    this.tokens.expect(28 /* T_COMMA */, 'A map must be followed by a comma');
+                    this.tokens.expect(32 /* T_COMMA */, 'A map must be followed by a comma');
                 }
                 var key = this.tokens.expect(1 /* T_STR */, 'A map key must be a string');
-                this.tokens.expect(29 /* T_COLON */, 'The map key and value must be separated by a colon(:)');
+                this.tokens.expect(33 /* T_COLON */, 'The map key and value must be separated by a colon(:)');
                 var value = this.parseExpression();
                 expr.addElement(new LiteralExpression(key.value, key.value, key.position), value);
             }
-            this.tokens.expect(27 /* T_RBRACE */, 'A map must be closed by a braces');
+            this.tokens.expect(31 /* T_RBRACE */, 'A map must be closed by a braces');
             return expr;
         };
         Parser.prototype.parseArguments = function () {
             // the_foo_func(1, "foo")
             var args = [];
-            this.tokens.expect(22 /* T_LPAREN */, 'A list of arguments must begin with an opening parenthesis');
-            while (!this.tokens.current().test(25 /* T_RPAREN */)) {
+            this.tokens.expect(26 /* T_LPAREN */, 'A list of arguments must begin with an opening parenthesis');
+            while (!this.tokens.current().test(29 /* T_RPAREN */)) {
                 if (args.length > 0) { // the prev arguments is exists.
-                    this.tokens.expect(28 /* T_COMMA */, 'Arguments must be separated by a comma');
+                    this.tokens.expect(32 /* T_COMMA */, 'Arguments must be separated by a comma');
                 }
                 args.push(this.parseExpression());
             }
-            this.tokens.expect(25 /* T_RPAREN */, 'A list of arguments must be closed by a parenthesis');
+            this.tokens.expect(29 /* T_RPAREN */, 'A list of arguments must be closed by a parenthesis');
             return args;
         };
         return Parser;

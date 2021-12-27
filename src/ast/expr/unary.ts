@@ -25,6 +25,7 @@ class UnaryExpression extends Expr{
                 result = this.argument.evaluate(runtime);
                 break;
             case '!':
+            case 'not':
                 result = !Boolean(this.argument.evaluate(runtime))
                 break;
             case '+':
