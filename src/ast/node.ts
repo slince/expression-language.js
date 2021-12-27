@@ -1,7 +1,7 @@
 import Position from "../position";
 import {Runtime} from "../runtime";
 
-interface Node {
+export interface Node {
     type: string;
     position: Position;
     evaluate(runtime: Runtime): any;

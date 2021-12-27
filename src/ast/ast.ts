@@ -1,4 +1,4 @@
-export {Expr, Stmt, Identifier} from "./node";
+export {Node, Expr, Stmt, Identifier} from "./node";
 export {default as AssignStatement} from "./stmt/assign";
 export {default as BlockStatement} from "./stmt/block";
 export {default as ExpressionStatement} from "./stmt/expr";

@@ -1,4 +1,3 @@
-import Lexer from "../src/lexer";
 // @ts-ignore
 import {json, lex, obj} from "./utils";
 import {TokenType} from "../src/token";

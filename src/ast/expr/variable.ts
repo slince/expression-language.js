@@ -8,7 +8,7 @@ class VariableExpression extends Expr implements RuntimeChanger{
 
     constructor(value: string, position: Position) {
         super(position);
-        this.type = 'Variable';
+        this.type = 'VariableExpression';
         this.value = value;
     }
 
