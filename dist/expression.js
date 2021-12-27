@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-    typeof define === 'function' && define.amd ? define(factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.expression = factory());
-})(this, (function () { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.expression = {}));
+})(this, (function (exports) { 'use strict';
 
     var Position = /** @class */ (function () {
         function Position(offset, line, column) {
@@ -474,6 +474,54 @@
         return Identifier;
     }(Root));
 
+    var AssignStatement = /** @class */ (function (_super) {
+        __extends(AssignStatement, _super);
+        function AssignStatement(variable, value, position) {
+            var _this = _super.call(this, position) || this;
+            _this.type = 'AssignStatement';
+            _this.variable = variable;
+            _this.value = value;
+            return _this;
+        }
+        AssignStatement.prototype.evaluate = function (runtime) {
+            // change runtime runtime.
+            runtime.setReference(this.variable.evaluate(runtime), this.value.evaluate(runtime));
+        };
+        return AssignStatement;
+    }(Stmt));
+
+    var BlockStatement = /** @class */ (function (_super) {
+        __extends(BlockStatement, _super);
+        function BlockStatement(stmts, position) {
+            var _this = _super.call(this, position) || this;
+            _this.type = 'BlockStatement';
+            _this.stmts = stmts;
+            return _this;
+        }
+        BlockStatement.prototype.evaluate = function (runtime) {
+            var evaluated; //return last statement.
+            this.stmts.forEach(function (stmt) {
+                evaluated = stmt.evaluate(runtime);
+            });
+            return evaluated;
+        };
+        return BlockStatement;
+    }(Stmt));
+
+    var ExpressionStatement = /** @class */ (function (_super) {
+        __extends(ExpressionStatement, _super);
+        function ExpressionStatement(expr, position) {
+            var _this = _super.call(this, position) || this;
+            _this.type = 'ExpressionStatement';
+            _this.expr = expr;
+            return _this;
+        }
+        ExpressionStatement.prototype.evaluate = function (runtime) {
+            return this.expr.evaluate(runtime);
+        };
+        return ExpressionStatement;
+    }(Stmt));
+
     var ArrayExpression = /** @class */ (function (_super) {
         __extends(ArrayExpression, _super);
         function ArrayExpression(elements, position) {
@@ -492,64 +540,6 @@
             return this.elements.map(function (element) { return element.evaluate(runtime); });
         };
         return ArrayExpression;
-    }(Expr));
-
-    var LiteralExpression = /** @class */ (function (_super) {
-        __extends(LiteralExpression, _super);
-        function LiteralExpression(value, raw, position) {
-            var _this = _super.call(this, position) || this;
-            _this.type = 'LiteralExpression';
-            _this.value = value;
-            _this.raw = raw;
-            return _this;
-        }
-        LiteralExpression.prototype.evaluate = function (runtime) {
-            return this.value;
-        };
-        return LiteralExpression;
-    }(Expr));
-
-    var AssignStatement = /** @class */ (function (_super) {
-        __extends(AssignStatement, _super);
-        function AssignStatement(variable, value, position) {
-            var _this = _super.call(this, position) || this;
-            _this.type = 'AssignStatement';
-            _this.variable = variable;
-            _this.value = value;
-            return _this;
-        }
-        AssignStatement.prototype.evaluate = function (runtime) {
-            // change runtime runtime.
-            runtime.setReference(this.variable.evaluate(runtime), this.value.evaluate(runtime));
-        };
-        return AssignStatement;
-    }(Stmt));
-
-    var MapExpression = /** @class */ (function (_super) {
-        __extends(MapExpression, _super);
-        function MapExpression(entries, position) {
-            var _this = _super.call(this, position) || this;
-            _this.type = 'MapExpression';
-            _this.entries = entries || [];
-            return _this;
-        }
-        MapExpression.prototype.addElement = function (key, value) {
-            this.entries.push({
-                key: key,
-                value: value
-            });
-        };
-        MapExpression.prototype.isEmpty = function () {
-            return this.entries.length === 0;
-        };
-        MapExpression.prototype.evaluate = function (runtime) {
-            var result = {};
-            this.entries.forEach(function (entry) {
-                result[entry.key.evaluate(runtime)] = entry.value.evaluate(runtime);
-            });
-            return result;
-        };
-        return MapExpression;
     }(Expr));
 
     var BinaryExpression = /** @class */ (function (_super) {
@@ -642,56 +632,62 @@
         return BinaryExpression;
     }(Expr));
 
-    var ExpressionStatement = /** @class */ (function (_super) {
-        __extends(ExpressionStatement, _super);
-        function ExpressionStatement(expr, position) {
+    var CallExpression = /** @class */ (function (_super) {
+        __extends(CallExpression, _super);
+        function CallExpression(callee, args, position) {
             var _this = _super.call(this, position) || this;
-            _this.type = 'ExpressionStatement';
-            _this.expr = expr;
+            _this.callee = callee;
+            _this.args = args;
             return _this;
         }
-        ExpressionStatement.prototype.evaluate = function (runtime) {
-            return this.expr.evaluate(runtime);
+        CallExpression.prototype.evaluate = function (runtime) {
+            var callee = this.callee.evaluate(runtime);
+            var args = this.args.map(function (arg) { return arg.evaluate(runtime); });
+            return callee(args);
         };
-        return ExpressionStatement;
-    }(Stmt));
+        return CallExpression;
+    }(Expr));
 
-    var BlockStatement = /** @class */ (function (_super) {
-        __extends(BlockStatement, _super);
-        function BlockStatement(stmts, position) {
+    var LiteralExpression = /** @class */ (function (_super) {
+        __extends(LiteralExpression, _super);
+        function LiteralExpression(value, raw, position) {
             var _this = _super.call(this, position) || this;
-            _this.type = 'BlockStatement';
-            _this.stmts = stmts;
-            return _this;
-        }
-        BlockStatement.prototype.evaluate = function (runtime) {
-            var evaluated; //return last statement.
-            this.stmts.forEach(function (stmt) {
-                evaluated = stmt.evaluate(runtime);
-            });
-            return evaluated;
-        };
-        return BlockStatement;
-    }(Stmt));
-
-    var VariableExpression = /** @class */ (function (_super) {
-        __extends(VariableExpression, _super);
-        function VariableExpression(value, position) {
-            var _this = _super.call(this, position) || this;
-            _this.type = 'Variable';
+            _this.type = 'LiteralExpression';
             _this.value = value;
+            _this.raw = raw;
             return _this;
         }
-        VariableExpression.prototype.evaluate = function (runtime) {
-            if (!runtime.hasReference(this.value)) {
-                throw new RuntimeError("Undefined Reference, ".concat(this.value, " is not defined"), this.position);
-            }
-            return runtime.getReference(this.value);
+        LiteralExpression.prototype.evaluate = function (runtime) {
+            return this.value;
         };
-        VariableExpression.prototype.changeRuntime = function (runtime, value) {
-            runtime.setReference(this.value, value);
+        return LiteralExpression;
+    }(Expr));
+
+    var MapExpression = /** @class */ (function (_super) {
+        __extends(MapExpression, _super);
+        function MapExpression(entries, position) {
+            var _this = _super.call(this, position) || this;
+            _this.type = 'MapExpression';
+            _this.entries = entries || [];
+            return _this;
+        }
+        MapExpression.prototype.addElement = function (key, value) {
+            this.entries.push({
+                key: key,
+                value: value
+            });
         };
-        return VariableExpression;
+        MapExpression.prototype.isEmpty = function () {
+            return this.entries.length === 0;
+        };
+        MapExpression.prototype.evaluate = function (runtime) {
+            var result = {};
+            this.entries.forEach(function (entry) {
+                result[entry.key.evaluate(runtime)] = entry.value.evaluate(runtime);
+            });
+            return result;
+        };
+        return MapExpression;
     }(Expr));
 
     var MemberExpression = /** @class */ (function (_super) {
@@ -719,46 +715,6 @@
             }
         };
         return MemberExpression;
-    }(Expr));
-
-    var CallExpression = /** @class */ (function (_super) {
-        __extends(CallExpression, _super);
-        function CallExpression(callee, args, position) {
-            var _this = _super.call(this, position) || this;
-            _this.callee = callee;
-            _this.args = args;
-            return _this;
-        }
-        CallExpression.prototype.evaluate = function (runtime) {
-            var callee = this.callee.evaluate(runtime);
-            var args = this.args.map(function (arg) { return arg.evaluate(runtime); });
-            return callee(args);
-        };
-        return CallExpression;
-    }(Expr));
-
-    var UpdateExpression = /** @class */ (function (_super) {
-        __extends(UpdateExpression, _super);
-        function UpdateExpression(operator, argument, prefix, position) {
-            var _this = _super.call(this, position) || this;
-            _this.type = 'UpdateExpression';
-            _this.operator = operator;
-            _this.argument = argument;
-            _this.prefix = prefix;
-            _this.position = position;
-            return _this;
-        }
-        UpdateExpression.prototype.evaluate = function (runtime) {
-            // force convert to number; not assert
-            var argument = Number(this.argument.evaluate(runtime));
-            var result = argument;
-            if (this.prefix) {
-                result = argument + 1;
-            }
-            this.argument.changeRuntime(runtime, result);
-            return result;
-        };
-        return UpdateExpression;
     }(Expr));
 
     var UnaryExpression = /** @class */ (function (_super) {
@@ -794,6 +750,50 @@
             return result;
         };
         return UnaryExpression;
+    }(Expr));
+
+    var UpdateExpression = /** @class */ (function (_super) {
+        __extends(UpdateExpression, _super);
+        function UpdateExpression(operator, argument, prefix, position) {
+            var _this = _super.call(this, position) || this;
+            _this.type = 'UpdateExpression';
+            _this.operator = operator;
+            _this.argument = argument;
+            _this.prefix = prefix;
+            _this.position = position;
+            return _this;
+        }
+        UpdateExpression.prototype.evaluate = function (runtime) {
+            // force convert to number; not assert
+            var argument = Number(this.argument.evaluate(runtime));
+            var result = argument;
+            if (this.prefix) {
+                result = argument + 1;
+            }
+            this.argument.changeRuntime(runtime, result);
+            return result;
+        };
+        return UpdateExpression;
+    }(Expr));
+
+    var VariableExpression = /** @class */ (function (_super) {
+        __extends(VariableExpression, _super);
+        function VariableExpression(value, position) {
+            var _this = _super.call(this, position) || this;
+            _this.type = 'Variable';
+            _this.value = value;
+            return _this;
+        }
+        VariableExpression.prototype.evaluate = function (runtime) {
+            if (!runtime.hasReference(this.value)) {
+                throw new RuntimeError("Undefined Reference, ".concat(this.value, " is not defined"), this.position);
+            }
+            return runtime.getReference(this.value);
+        };
+        VariableExpression.prototype.changeRuntime = function (runtime, value) {
+            runtime.setReference(this.value, value);
+        };
+        return VariableExpression;
     }(Expr));
 
     var Parser = /** @class */ (function () {
@@ -1065,37 +1065,42 @@
         return GenericRuntime;
     }());
 
-    var Expression = /** @class */ (function () {
-        function Expression() {
+    var Evaluator = /** @class */ (function () {
+        function Evaluator() {
         }
         // Evaluate the expression and return output of the last expr.
-        Expression.prototype.evaluate = function (source, context) {
-            var node = Expression.createParser(source).parse();
-            return node.evaluate(Expression.createRuntime(context));
+        Evaluator.prototype.evaluate = function (source, context) {
+            var node = Evaluator.createParser(source).parse();
+            return node.evaluate(Evaluator.createRuntime(context));
         };
         // parse the ast of the source.
-        Expression.prototype.parse = function (source) {
-            return Expression.createParser(source).parse();
+        Evaluator.prototype.parse = function (source) {
+            return Evaluator.createParser(source).parse();
         };
         // tokenize source code.
-        Expression.prototype.lex = function (source) {
-            return Expression.createLexer(source).lex();
+        Evaluator.prototype.lex = function (source) {
+            return Evaluator.createLexer(source).lex();
         };
-        Expression.createRuntime = function (context) {
+        Evaluator.createRuntime = function (context) {
             if (typeof context.hasReference === 'function') {
                 return context;
             }
             return new GenericRuntime(context);
         };
-        Expression.createParser = function (source) {
-            return new Parser(Expression.createLexer(source).lex());
+        Evaluator.createParser = function (source) {
+            return new Parser(Evaluator.createLexer(source).lex());
         };
-        Expression.createLexer = function (source) {
+        Evaluator.createLexer = function (source) {
             return new Lexer(source);
         };
-        return Expression;
+        return Evaluator;
     }());
 
-    return Expression;
+    exports.Evaluator = Evaluator;
+    exports.GenericRuntime = GenericRuntime;
+    exports.Lexer = Lexer;
+    exports.Parser = Parser;
+
+    Object.defineProperty(exports, '__esModule', { value: true });
 
 }));

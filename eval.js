@@ -1,11 +1,11 @@
 
-import Expression from "./dist/expression.js";
+import {Evaluator} from "./dist/expression.mjs";
 
 
-const code = `!!+--a`;
-// const code = `++ b + c++`;
+// const code = `!!+--a`;
+const code = `++ b + c++;c`;
 
-const evaluator = new Expression();
+const evaluator = new Evaluator();
 
 const result = evaluator.parse(code);
 
