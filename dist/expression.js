@@ -846,6 +846,13 @@
             }
             return stmt;
         };
+        Parser.prototype.parseAssignStatement = function () {
+            var token = this.tokens.current();
+            var variable = new Identifier(token.value, token.position);
+            this.tokens.next();
+            this.tokens.expect(16 /* T_ASSIGN */);
+            return new AssignStatement(variable, this.parseExpression(), token.position);
+        };
         Parser.prototype.parseBlockStatement = function () {
             this.tokens.expect(24 /* T_LBRACE */, 'A block must begin with an opening braces');
             var token = this.tokens.current();
@@ -855,11 +862,6 @@
             }
             this.tokens.expect(27 /* T_RBRACE */, 'A block must be closed by a braces');
             return new BlockStatement(stmts, token.position);
-        };
-        Parser.prototype.parseAssignStatement = function () {
-            var token = this.tokens.current();
-            var variable = new Identifier(token.value, token.position);
-            return new AssignStatement(variable, this.parseExpression(), token.position);
         };
         Parser.prototype.parseExpression = function () {
             var expr = this.parsePrimaryExpression();

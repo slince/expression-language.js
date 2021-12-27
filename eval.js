@@ -3,7 +3,7 @@ import {Evaluator} from "./dist/expression.mjs";
 
 
 // const code = `!!+--a`;
-const code = `d = 10; d + 2`;
+const code = `d2.a++; d2.a + 2`;
 
 const evaluator = new Evaluator();
 
@@ -14,6 +14,9 @@ const result2 = evaluator.evaluate(code, {
         read: function(){
             return {a: 10}
         }
+    },
+    d2: {
+        a: 10
     },
     b: 2,
     c: 6

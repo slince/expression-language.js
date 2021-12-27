@@ -82,6 +82,9 @@ export default class Lexer{
                 if (next === '=') {
                     type = TokenType.T_LE;
                     this.next();
+                } else if (next === '<') {
+                    type = TokenType.T_SHL;
+                    this.next();
                 }
                 break;
             case '>':
@@ -90,10 +93,13 @@ export default class Lexer{
                 if (next === '=') {
                     type = TokenType.T_GE;
                     this.next();
+                } else if (next === '>') {
+                    type = TokenType.T_SHR;
+                    this.next();
                 }
                 break;
             case '&':
-                type = TokenType.T_LEA;
+                type = TokenType.T_AMP;
                 next = this.look();
                 if (next === '&') {
                     type = TokenType.T_AND;
@@ -125,6 +131,13 @@ export default class Lexer{
                 break;
             case '%':
                 type = TokenType.T_MOD;
+                break;
+
+            case '|':
+                type = TokenType.T_PIPE;
+                break;
+            case '^':
+                type = TokenType.T_XOR;
                 break;
 
             case '(':

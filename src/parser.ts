@@ -35,6 +35,14 @@ export default class Parser{
         return stmt;
     }
 
+    parseAssignStatement(): ast.AssignStatement{
+        const token = this.tokens.current();
+        const variable = new ast.Identifier(token.value, token.position);
+        this.tokens.next();
+        this.tokens.expect(TokenType.T_ASSIGN);
+        return new ast.AssignStatement(variable, this.parseExpression(), token.position);
+    }
+
     parseBlockStatement(): ast.BlockStatement{
         this.tokens.expect(TokenType.T_LBRACE, 'A block must begin with an opening braces');
         const token = this.tokens.current();
@@ -44,12 +52,6 @@ export default class Parser{
         }
         this.tokens.expect(TokenType.T_RBRACE, 'A block must be closed by a braces');
         return new ast.BlockStatement(stmts, token.position);
-    }
-
-    parseAssignStatement(): ast.AssignStatement{
-        const token = this.tokens.current();
-        const variable = new ast.Identifier(token.value, token.position);
-        return new ast.AssignStatement(variable, this.parseExpression(), token.position);
     }
 
     parseExpression(): ast.Expr{
@@ -93,6 +95,7 @@ export default class Parser{
                 expr = this.parseUpdateExpression(true);
                 break;
             case TokenType.T_NOT:
+            case TokenType.T_KW_NOT:
             case TokenType.T_ADD:
             case TokenType.T_SUB:
                 expr = this.parseUnaryExpression();

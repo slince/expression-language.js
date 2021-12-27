@@ -7,16 +7,23 @@ export const enum TokenType {
     T_STR, // abc
     T_NUM, // 123
     T_ID, // foo
+    // punctuation
     T_ADD, // +
     T_SUB, // -
     T_MUL, // *
     T_DIV, // /
     T_MOD, // %
+
+    T_AMP,  // &
+    T_PIPE, // |
+    T_XOR,  // ^
+    T_SHL,  // <<
+    T_SHR,  // >>
+
     T_INC, // ++
     T_DEC, // --
     T_NOT, // !
     T_NEQ, // !=
-    T_LEA, // &
     T_AND, // &&
     T_OR, // ||
     T_ASSIGN, // =
@@ -37,8 +44,10 @@ export const enum TokenType {
     T_DOT, // .
     T_QUESTION, // ?
     T_KW_BEGIN,
+    T_KW_NOT, // not
     T_KW_OR, // or
     T_KW_AND, // and
+    T_KW_IN, // in
     T_KW_END
 }
 
@@ -54,11 +63,17 @@ Tokens[TokenType.T_SUB] = '-';
 Tokens[TokenType.T_MUL] = '*';
 Tokens[TokenType.T_DIV] = '/';
 Tokens[TokenType.T_MOD] = '%';
+
+Tokens[TokenType.T_AMP] = '&';
+Tokens[TokenType.T_PIPE] = '|';
+Tokens[TokenType.T_XOR] = '^';
+Tokens[TokenType.T_SHL] = '<<';
+Tokens[TokenType.T_SHR] = '>>';
+
 Tokens[TokenType.T_INC] = '++';
 Tokens[TokenType.T_DEC] = '--';
 Tokens[TokenType.T_NOT] = '!';
 Tokens[TokenType.T_NEQ] = '!=';
-Tokens[TokenType.T_LEA] = '&';
 Tokens[TokenType.T_AND] = '&&';
 Tokens[TokenType.T_OR] = '||';
 Tokens[TokenType.T_ASSIGN] = '=';
@@ -79,13 +94,17 @@ Tokens[TokenType.T_SEMICOLON] = ';';
 Tokens[TokenType.T_DOT] = '.';
 Tokens[TokenType.T_QUESTION] = '?'
 // keywords
+Tokens[TokenType.T_KW_NOT] = 'not'
 Tokens[TokenType.T_KW_OR] = 'or'
 Tokens[TokenType.T_KW_AND] = 'and'
+Tokens[TokenType.T_KW_IN] = 'in'
 
 // list all keywords.
 const keywords: {[key: string]: TokenType} = {
+    'not': TokenType.T_KW_NOT,
     'or': TokenType.T_KW_OR,
-    'and': TokenType.T_KW_AND
+    'and': TokenType.T_KW_AND,
+    'in': TokenType.T_KW_IN,
 };
 
 // binary & unary
@@ -119,14 +138,14 @@ const binaryOperators: {[key: string]: OperatorPrecedence} = {
     '<=': {'precedence': 20, 'associativity': OperatorAssociativity.Left},
     'not in': {'precedence': 20, 'associativity': OperatorAssociativity.Left},
     'in': {'precedence': 20, 'associativity': OperatorAssociativity.Left},
-    '..': {'precedence': 25, 'associativity': OperatorAssociativity.Left},
+    '<<': {'precedence': 25, 'associativity': OperatorAssociativity.Left},
+    '>>': {'precedence': 25, 'associativity': OperatorAssociativity.Left},
     '+': {'precedence': 30, 'associativity': OperatorAssociativity.Left},
     '-': {'precedence': 30, 'associativity': OperatorAssociativity.Left},
     '~': {'precedence': 40, 'associativity': OperatorAssociativity.Left},
     '*': {'precedence': 60, 'associativity': OperatorAssociativity.Left},
     '/': {'precedence': 60, 'associativity': OperatorAssociativity.Left},
     '%': {'precedence': 60, 'associativity': OperatorAssociativity.Left},
-    '**': {'precedence': 200, 'associativity': OperatorAssociativity.Right},
 };
 
 const unaryOperators: {[key: string]: OperatorPrecedence} = {
