@@ -1,7 +1,7 @@
 {
   "name": "expression.js",
   "version": "1.0.0",
-  "description": "An engine that can compile and evaluate expressions written in javascript",
+  "description": "An engine for javascript that can compile and evaluate expressions written in typescript",
   "main": "dist/expression.js",
   "author": "slince <taosikai@yeah.net>",
   "scripts": {
