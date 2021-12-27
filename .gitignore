@@ -2,8 +2,7 @@
 node_modules/
 .idea/
 # Cover
-.coverage_data/
-cover_html/
+coverage/
 npm-debug.log
 package-lock.json
 src/*.js
@@ -11,3 +10,4 @@ src/*/*.js
 src/*/*/*.js
 output
 dts
+.DS_Store

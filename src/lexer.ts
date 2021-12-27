@@ -18,7 +18,7 @@ export default class Lexer{
             throw new SyntaxError('The source code cannot be blank');
         }
         this.offset = 0;
-        this.line = 1;
+        this.line = 0;
         this.column = 0;
     }
 
@@ -220,6 +220,7 @@ export default class Lexer{
                 continue;
             }
             this.offset --; // back one if the next is not matched.
+            this.column --;
             break;
         }
         return buffer.join('');
@@ -231,7 +232,7 @@ export default class Lexer{
             this.line ++;
             this.column = 0;
         } else {
-            this.column++;
+            this.column ++;
         }
         return ch;
     }

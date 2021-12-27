@@ -203,7 +203,7 @@ export class Token{
 }
 
 export class TokenStream{
-    index: number;
+    private index: number;
     tokens: Token[];
 
     constructor() {
@@ -227,6 +227,9 @@ export class TokenStream{
         return this.tokens[this.index + (number || 1)];
     }
 
+    count(): number{
+        return this.tokens.length
+    }
     expect(type: TokenType, message?: string): Token {
         const token = this.current();
         const value = Tokens[type];
