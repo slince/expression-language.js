@@ -2,8 +2,8 @@ import Position from "../position";
 import {Runtime} from "../runtime";
 
 export interface Node {
-    type: string;
-    position: Position;
+    readonly type: string;
+    readonly position: Position;
     evaluate(runtime: Runtime): any;
 }
 
@@ -14,7 +14,7 @@ export interface RuntimeChanger{
 // root node.
 export class Root implements Node{
     type: string;
-    position: Position;
+    readonly position: Position;
 
     constructor(position: Position) {
         this.type = 'Node';

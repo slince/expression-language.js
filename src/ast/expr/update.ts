@@ -17,7 +17,6 @@ class UpdateExpression extends Expr{
         this.operator = operator;
         this.argument = argument;
         this.prefix = prefix;
-        this.position = position;
     }
 
     evaluate(runtime: Runtime): number {

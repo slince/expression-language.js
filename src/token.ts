@@ -171,9 +171,9 @@ export const Keyword = {
 };
 
 export class Token{
-    type: TokenType;
-    value: string;
-    position: Position;
+    readonly type: TokenType;
+    readonly value: string;
+    readonly position: Position;
 
     constructor(type: TokenType, value: string, position: Position) {
         this.type = type;
@@ -204,7 +204,7 @@ export class Token{
 
 export class TokenStream{
     private index: number;
-    tokens: Token[];
+    private readonly tokens: Token[];
 
     constructor() {
         this.index = 0;

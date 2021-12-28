@@ -4,7 +4,7 @@ import * as ast from "./ast/ast";
 
 export default class Parser{
 
-    tokens: TokenStream;
+    private readonly tokens: TokenStream;
 
     constructor(tokens: TokenStream) {
         this.tokens = tokens;
@@ -35,7 +35,7 @@ export default class Parser{
         return stmt;
     }
 
-    parseAssignStatement(): ast.AssignStatement{
+    private parseAssignStatement(): ast.AssignStatement{
         const token = this.tokens.current();
         const variable = new ast.Identifier(token.value, token.position);
         this.tokens.next();
@@ -43,7 +43,7 @@ export default class Parser{
         return new ast.AssignStatement(variable, this.parseExpression(), token.position);
     }
 
-    parseBlockStatement(): ast.BlockStatement{
+    private parseBlockStatement(): ast.BlockStatement{
         this.tokens.expect(TokenType.T_LBRACE, 'A block must begin with an opening braces');
         const token = this.tokens.current();
         const stmts = [];
@@ -62,7 +62,7 @@ export default class Parser{
         return expr;
     }
 
-    parsePrimaryExpression(): ast.Expr{
+    private parsePrimaryExpression(): ast.Expr{
         const token = this.tokens.current();
         let expr;
         switch (token.type) {
@@ -106,7 +106,7 @@ export default class Parser{
         return this.parsePosixExpression(expr);
     }
 
-    parsePosixExpression(expr: ast.Expr): ast.Expr{
+    private parsePosixExpression(expr: ast.Expr): ast.Expr{
         while (true) {
             const token = this.tokens.current();
             let end = false;
@@ -134,7 +134,7 @@ export default class Parser{
         return expr;
     }
 
-    parseIdentifierExpression(): ast.Expr{
+    private parseIdentifierExpression(): ast.Expr{
         const token = this.tokens.current();
         let expr;
         switch (token.value) {
@@ -157,7 +157,7 @@ export default class Parser{
         return expr;
     }
 
-    parseObjectExpression(object: ast.Expr): ast.Expr{
+    private parseObjectExpression(object: ast.Expr): ast.Expr{
         this.tokens.expect(TokenType.T_DOT);
         const token = this.tokens.expect(TokenType.T_ID);
         const property = new ast.Identifier(token.value, token.position);
@@ -168,14 +168,14 @@ export default class Parser{
         return expr;
     }
 
-    parseAccessExpression(object: ast.Expr): ast.MemberExpression{
+    private parseAccessExpression(object: ast.Expr): ast.MemberExpression{
         this.tokens.expect(TokenType.T_LBRACKET);
         const property = this.parseExpression();
         this.tokens.expect(TokenType.T_RBRACKET);
         return new ast.MemberExpression(object, property as ast.Identifier, false, object.position)
     }
 
-    parseBinaryExpression(expr: ast.Expr): ast.BinaryExpression{
+    private parseBinaryExpression(expr: ast.Expr): ast.BinaryExpression{
         // a + b * c / d
         // a * b + c
         while (this.tokens.current().isBinaryOperator()) {
@@ -184,7 +184,7 @@ export default class Parser{
         return expr as ast.BinaryExpression;
     }
 
-    doParseBinary(left: ast.Expr, prevPrecedence: number): ast.Expr{
+    private doParseBinary(left: ast.Expr, prevPrecedence: number): ast.Expr{
 
         while (this.tokens.current().isBinaryOperator()) {
             const token = this.tokens.current();
@@ -212,7 +212,7 @@ export default class Parser{
         return left;
     }
 
-    parseUnaryExpression(): ast.UnaryExpression{
+    private parseUnaryExpression(): ast.UnaryExpression{
         // !+-+-+-!!+-10
         const token = this.tokens.current();
         const operator = token.value;
@@ -221,7 +221,7 @@ export default class Parser{
         return new ast.UnaryExpression(operator, argument, token.position);
     }
 
-    parseUpdateExpression(prefix: boolean, argument?: ast.Expr): ast.UpdateExpression {
+    private parseUpdateExpression(prefix: boolean, argument?: ast.Expr): ast.UpdateExpression {
         const token = this.tokens.expectOneOf(TokenType.T_INC, TokenType.T_DEC);
         if (prefix) {  // ++a ++a.b ++a.read()
             // ++ a + 1
@@ -235,14 +235,14 @@ export default class Parser{
         return new ast.UpdateExpression (token.value, argument, prefix, prefix ? token.position : argument.position)
     }
 
-    parseParenExpression(): ast.Expr{
+    private parseParenExpression(): ast.Expr{
         this.tokens.expect(TokenType.T_LPAREN);
         const expr = this.parseExpression();
         this.tokens.expect(TokenType.T_RPAREN);
         return expr;
     }
 
-    parseArrayExpression(): ast.ArrayExpression {
+    private parseArrayExpression(): ast.ArrayExpression {
         const token = this.tokens.current();
         const expr = new ast.ArrayExpression ([], token.position);
         this.tokens.expect(TokenType.T_LBRACKET, 'An array must begin with an opening brackets');
@@ -256,7 +256,7 @@ export default class Parser{
         return expr;
     }
 
-    parseMapExpression(): ast.MapExpression {
+    private parseMapExpression(): ast.MapExpression {
         const token = this.tokens.current();
         this.tokens.expect(TokenType.T_LBRACE, 'A map must begin with an opening braces');
         const expr = new ast.MapExpression ([], token.position);
@@ -273,7 +273,7 @@ export default class Parser{
         return expr;
     }
 
-    parseArguments(): ast.Expr[]{
+    private parseArguments(): ast.Expr[]{
         // the_foo_func(1, "foo")
         const args = [];
         this.tokens.expect(TokenType.T_LPAREN, 'A list of arguments must begin with an opening parenthesis');

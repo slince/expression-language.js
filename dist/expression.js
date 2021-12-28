@@ -204,6 +204,9 @@
         TokenStream.prototype.look = function (number) {
             return this.tokens[this.index + (number || 1)];
         };
+        TokenStream.prototype.count = function () {
+            return this.tokens.length;
+        };
         TokenStream.prototype.expect = function (type, message) {
             var token = this.current();
             var value = Tokens[type];
@@ -255,7 +258,7 @@
                 throw new SyntaxError('The source code cannot be blank');
             }
             this.offset = 0;
-            this.line = 1;
+            this.line = 0;
             this.column = 0;
         }
         Lexer.prototype.lex = function () {
@@ -447,6 +450,7 @@
                     continue;
                 }
                 this.offset--; // back one if the next is not matched.
+                this.column--;
                 break;
             }
             return buffer.join('');
@@ -682,6 +686,7 @@
         __extends(CallExpression, _super);
         function CallExpression(callee, args, position) {
             var _this = _super.call(this, position) || this;
+            _this.type = "CallExpression";
             _this.callee = callee;
             _this.args = args;
             return _this;
@@ -740,6 +745,7 @@
         __extends(MemberExpression, _super);
         function MemberExpression(object, property, computed, position) {
             var _this = _super.call(this, position) || this;
+            _this.type = "MemberExpression";
             _this.object = object;
             _this.property = property;
             _this.computed = computed;
@@ -807,7 +813,6 @@
             _this.operator = operator;
             _this.argument = argument;
             _this.prefix = prefix;
-            _this.position = position;
             return _this;
         }
         UpdateExpression.prototype.evaluate = function (runtime) {
@@ -824,7 +829,7 @@
         __extends(VariableExpression, _super);
         function VariableExpression(value, position) {
             var _this = _super.call(this, position) || this;
-            _this.type = 'Variable';
+            _this.type = 'VariableExpression';
             _this.value = value;
             return _this;
         }
@@ -1006,22 +1011,30 @@
             // a + b * c / d
             // a * b + c
             while (this.tokens.current().isBinaryOperator()) {
-                expr = this.doParseBinary(expr);
+                expr = this.doParseBinary(expr, -1);
             }
             return expr;
         };
-        Parser.prototype.doParseBinary = function (left) {
-            var token = this.tokens.current();
-            var operator = token.value;
-            var currentPrecedence = token.getBinaryPrecedence().precedence;
-            // right expr.
-            this.tokens.next();
-            var right = this.parsePrimaryExpression();
-            var nextPrecedence = this.tokens.current().getBinaryPrecedence().precedence;
-            if (currentPrecedence < nextPrecedence) {
-                right = this.doParseBinary(right);
+        Parser.prototype.doParseBinary = function (left, prevPrecedence) {
+            while (this.tokens.current().isBinaryOperator()) {
+                var token = this.tokens.current();
+                var operator = token.value;
+                var currentPrecedence = token.getBinaryPrecedence().precedence;
+                // if the current less than prev, don't consume token.
+                if (currentPrecedence < prevPrecedence) {
+                    break;
+                }
+                // right expr.
+                this.tokens.next();
+                var right = this.parsePrimaryExpression();
+                var nextPrecedence = this.tokens.current().getBinaryPrecedence().precedence;
+                if (currentPrecedence < nextPrecedence) {
+                    right = this.doParseBinary(right, currentPrecedence);
+                }
+                prevPrecedence = currentPrecedence;
+                left = new BinaryExpression(left, operator, right, left.position);
             }
-            return new BinaryExpression(left, operator, right, left.position);
+            return left;
         };
         Parser.prototype.parseUnaryExpression = function () {
             // !+-+-+-!!+-10
