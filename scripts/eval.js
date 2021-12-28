@@ -1,5 +1,5 @@
 
-import {Evaluator} from "./dist/expression.mjs";
+import {Evaluator} from "../dist/expression.mjs";
 
 
 // const code = `!!+--a`;

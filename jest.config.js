@@ -31,6 +31,7 @@ export default {
     "/node_modules/",
     "/dist/",
     "/tests/",
+    "/scripts/",
   ],
 
   // Indicates which provider should be used to instrument code for coverage

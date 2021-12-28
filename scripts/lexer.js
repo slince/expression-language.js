@@ -1,5 +1,5 @@
-import Lexer from "./src/lexer.js";
-import Parser from "./src/parser.js";
+import Lexer from "../src/lexer.js";
+import Parser from "../src/parser.js";
 
 const code = `
 

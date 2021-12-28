@@ -19,8 +19,11 @@
     "lexer",
     "parser",
     "ast",
+    "eval",
+    "evaluator",
     "expression",
-    "expression-language"
+    "expression-language",
+    "typescript"
   ],
   "license": "MIT",
   "type": "module",
