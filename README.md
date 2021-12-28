@@ -1,24 +1,24 @@
-# Expression.js
+# Expression-language.js
 
-[![Build Status](https://img.shields.io/github/workflow/status/slince/expression.js/ci?style=flat-square)](https://github.com/slince/expression.js/actions)
-[![Coverage Status](https://img.shields.io/codecov/c/github/slince/expression.js/master?style=flat-square)](https://codecov.io/github/slince/expression.js)
-[![NPM version](https://img.shields.io/npm/v/expression.js.svg?style=flat-square)](https://www.npmjs.com/package/expression.js)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/slince/expression.js/blob/master/LICENSE)
+[![Build Status](https://img.shields.io/github/workflow/status/slince/expression-language.js/ci?style=flat-square)](https://github.com/slince/expression-language.js/actions)
+[![Coverage Status](https://img.shields.io/codecov/c/github/slince/expression-language.js/master?style=flat-square)](https://codecov.io/github/slince/expression-language.js)
+[![NPM version](https://img.shields.io/npm/v/expression-language.js.svg?style=flat-square)](https://www.npmjs.com/package/expression-language.js)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/slince/expression-language.js/blob/master/LICENSE)
 
-Expression.js is an engine for javascript that can compile and evaluate expressions written in typescript.
+Expression-language.js is an engine for javascript that can compile and evaluate expressions written in typescript.
 
 # Installation
 
 Install via `npm`.
 
 ```bash
-npm install expression.js --save
+npm install expression-language.js --save
 ```
 
 or `yarn`.
 
 ```bash
-yarn add expression.js
+yarn add expression-language.js
 ```
 
 # Getting Started
@@ -27,7 +27,7 @@ Example:
 
 ```javascript
 
-import {Evaluator} from "expression.js";
+import {Evaluator} from "expression-language.js";
 
 const evaluator = new Evaluator();
 

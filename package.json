@@ -1,8 +1,8 @@
 {
-  "name": "expression.js",
+  "name": "expression-language.js",
   "version": "1.0.0",
   "description": "An engine for javascript that can compile and evaluate expressions written in typescript",
-  "main": "dist/expression.js",
+  "main": "dist/expression.mjs",
   "author": "slince <taosikai@yeah.net>",
   "scripts": {
     "test": "jest",
@@ -39,10 +39,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/slince/expression.js.git"
+    "url": "git+https://github.com/slince/expression-language.js.git"
   },
   "bugs": {
-    "url": "https://github.com/slince/expression.js/issues"
+    "url": "https://github.com/slince/expression-language.js/issues"
   },
-  "homepage": "https://github.com/slince/expression.js#readme"
+  "homepage": "https://github.com/slince/expression-language.js#readme"
 }
