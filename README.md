@@ -18,7 +18,7 @@ npm install expression.js --save
 or `yarn`.
 
 ```bash
-yarn addd expression.js
+yarn add expression.js
 ```
 
 # Getting Started
@@ -48,10 +48,6 @@ if (evaluator.evaluate(expr, context)) {
 }
 
 ```
-
-## LICENSE
-
-The MIT license. See [MIT](https://opensource.org/licenses/MIT)
 
 Supported binary & unary.
 
@@ -122,6 +118,7 @@ evaluator.evaluate('people.say("hello", "world")', {
 
 You can write multi expressions, separated by SEMICOLON(;); However, evaluator will only return the value of the last expr.
 
+
 ```javascript
 evaluator.evaluate('12; "abc"'); //will ouput "abc"
 ```
@@ -132,6 +129,7 @@ Assign statement is also supported.
 evaluator.evaluate('a = 10; a + 2'); //will ouput 12
 ```
 
+## LICENSE
 
-
+The MIT license. See [MIT](https://opensource.org/licenses/MIT)
 
