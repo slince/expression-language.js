@@ -18,7 +18,7 @@ npm install expression.js --save
 or `yarn`.
 
 ```bash
-yarn addd expression.js
+yarn add expression.js
 ```
 
 # Getting Started
