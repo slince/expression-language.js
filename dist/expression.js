@@ -781,12 +781,6 @@
         UnaryExpression.prototype.evaluate = function (runtime) {
             var result;
             switch (this.operator) {
-                case '++':
-                    result = this.argument.evaluate(runtime);
-                    break;
-                case '--':
-                    result = this.argument.evaluate(runtime);
-                    break;
                 case '!':
                 case 'not':
                     result = !Boolean(this.argument.evaluate(runtime));
@@ -818,8 +812,21 @@
         UpdateExpression.prototype.evaluate = function (runtime) {
             // force convert to number; not assert
             var argument = Number(this.argument.evaluate(runtime));
-            var result = this.prefix ? argument + 1 : argument;
-            this.argument.changeRuntime(runtime, argument + 1);
+            var result;
+            var changed;
+            switch (this.operator) {
+                case '++':
+                    changed = argument + 1;
+                    result = this.prefix ? changed : argument;
+                    break;
+                case '--':
+                    changed = argument - 1;
+                    result = this.prefix ? changed : argument;
+                    break;
+                default:
+                    throw new RuntimeError("Unrecognized operator ".concat(this.operator));
+            }
+            this.argument.changeRuntime(runtime, changed);
             return result;
         };
         return UpdateExpression;
@@ -1132,7 +1139,7 @@
         // Evaluate the expression and return output of the last expr.
         Evaluator.prototype.evaluate = function (source, context) {
             var node = Evaluator.createParser(source).parse();
-            return node.evaluate(Evaluator.createRuntime(context));
+            return node.evaluate(Evaluator.createRuntime(context || {}));
         };
         // parse the ast of the source.
         Evaluator.prototype.parse = function (source) {

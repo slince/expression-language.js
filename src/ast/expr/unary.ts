@@ -18,12 +18,6 @@ class UnaryExpression extends Expr{
     evaluate(runtime: Runtime): any{
         let result;
         switch (this.operator) {
-            case '++':
-                result = this.argument.evaluate(runtime)
-                break;
-            case '--':
-                result = this.argument.evaluate(runtime);
-                break;
             case '!':
             case 'not':
                 result = !Boolean(this.argument.evaluate(runtime))

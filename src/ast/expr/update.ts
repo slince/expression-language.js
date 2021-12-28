@@ -3,6 +3,7 @@ import Position from "../../position";
 import {Runtime} from "../../runtime";
 import MemberExpression from "./member";
 import VariableExpression from "./variable";
+import {RuntimeError} from "../../errors";
 
 type Variable = VariableExpression | MemberExpression;
 
@@ -22,8 +23,21 @@ class UpdateExpression extends Expr{
     evaluate(runtime: Runtime): number {
         // force convert to number; not assert
         const argument = Number(this.argument.evaluate(runtime));
-        const result = this.prefix ? argument + 1 : argument;
-        this.argument.changeRuntime(runtime, argument + 1);
+        let result: number;
+        let changed: number;
+        switch (this.operator) {
+            case '++':
+                changed = argument + 1;
+                result = this.prefix ? changed : argument;
+                break;
+            case '--':
+                changed = argument - 1;
+                result = this.prefix ? changed : argument;
+                break;
+            default:
+                throw new RuntimeError(`Unrecognized operator ${this.operator}`);
+        }
+        this.argument.changeRuntime(runtime, changed);
         return result;
     }
 }

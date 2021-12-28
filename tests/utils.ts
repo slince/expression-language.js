@@ -1,5 +1,5 @@
 import {TokenStream} from "../src/token";
-import {Lexer, Parser} from "../src/expression";
+import {Evaluator, Lexer, Parser} from "../src/expression";
 import * as ast from "../src/ast/ast";
 
 
@@ -21,4 +21,10 @@ export function parse(source: string): ast.BlockStatement{
 
 export function expr(source: string): ast.Expr{
     return new Parser(lex(source)).parseExpression() ;
+}
+
+const evaluator = new Evaluator();
+
+export function eval2(source: string, context?: {[key:string]: any}): any{
+    return evaluator.evaluate(source, context);
 }

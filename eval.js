@@ -3,18 +3,14 @@ import {Evaluator} from "./dist/expression.mjs";
 
 
 // const code = `!!+--a`;
-const code = `a = {"a": "bcded"}; a.a`;
+const code = `a(12)`;
 
 const evaluator = new Evaluator();
 
 const result = evaluator.parse(code);
 
 const result2 = evaluator.evaluate(code, {
-    a: {
-        read: function(){
-            return {a: 10}
-        }
-    },
+    a: function(a) { return a},
     d2: {
         a: 10
     },

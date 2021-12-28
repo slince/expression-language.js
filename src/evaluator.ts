@@ -5,9 +5,9 @@ import {GenericRuntime, Runtime} from "./runtime";
 class Evaluator{
 
     // Evaluate the expression and return output of the last expr.
-    evaluate(source: string, context: {} | Runtime){
+    evaluate(source: string, context?: {[key: string]: any} | Runtime){
         const node = Evaluator.createParser(source).parse();
-        return node.evaluate(Evaluator.createRuntime(context));
+        return node.evaluate(Evaluator.createRuntime(context || {}));
     }
 
     // parse the ast of the source.
@@ -20,7 +20,7 @@ class Evaluator{
         return Evaluator.createLexer(source).lex();
     }
 
-    private static createRuntime(context: {} | Runtime): Runtime{
+    private static createRuntime(context: {[key: string]: any} | Runtime): Runtime{
         if (typeof (context as Runtime).hasReference === 'function') {
             return context as Runtime;
         }
