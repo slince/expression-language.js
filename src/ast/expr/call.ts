@@ -16,7 +16,7 @@ class CallExpression extends Expr{
     evaluate(runtime: Runtime): any{
         const callee = this.callee.evaluate(runtime);
         const args = this.args.map(arg => arg.evaluate(runtime))
-        return callee(args);
+        return callee(...args);
     }
 }
 

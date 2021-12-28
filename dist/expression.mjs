@@ -644,7 +644,7 @@ var BinaryExpression = /** @class */ (function (_super) {
                 result = right.indexOf(left) === -1;
                 break;
             case 'in':
-                result = right.indexOf(left) > 0;
+                result = right.indexOf(left) > -1;
                 break;
             case '+':
                 result = left + right;
@@ -688,7 +688,7 @@ var CallExpression = /** @class */ (function (_super) {
     CallExpression.prototype.evaluate = function (runtime) {
         var callee = this.callee.evaluate(runtime);
         var args = this.args.map(function (arg) { return arg.evaluate(runtime); });
-        return callee(args);
+        return callee.apply(void 0, args);
     };
     return CallExpression;
 }(Expr));

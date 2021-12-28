@@ -66,7 +66,7 @@ class BinaryExpression extends Expr{
                 result = right.indexOf(left) === -1;
                 break;
             case 'in':
-                result = right.indexOf(left) > 0;
+                result = right.indexOf(left) > -1;
                 break;
             case '+':
                 result = left + right;
