@@ -42,6 +42,7 @@ class BinaryExpression extends Expr{
                 result = left == right;
                 break;
             case '===':
+            case 'is':
                 result = left === right;
                 break;
             case '!=':

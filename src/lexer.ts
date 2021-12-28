@@ -56,24 +56,30 @@ export default class Lexer{
     }
 
     private lexPunctuation(position: Position){
-        let type, next;
+        let type: TokenType, next: string;
         let ch = this.current()
         switch (ch) {
             case '=':
                 type = TokenType.T_ASSIGN;
-                next = this.look();
-                if (next === '=') {
+                if (this.look() === '=') {
                     type = TokenType.T_EQ;
                     this.next();
+                    if (this.look() === '=') {
+                        type = TokenType.T_STRICT_EQ;
+                        this.next();
+                    }
                 }
                 break;
 
             case '!':
                 type = TokenType.T_NOT;
-                next = this.look();
-                if (next === '=') {
+                if (this.look() === '=') {
                     type = TokenType.T_NEQ;
                     this.next();
+                    if (this.look() === '=') {
+                        type = TokenType.T_STRICT_NEQ;
+                        this.next();
+                    }
                 }
                 break;
             case '<':

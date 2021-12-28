@@ -24,6 +24,7 @@ export const enum TokenType {
     T_DEC, // --
     T_NOT, // !
     T_NEQ, // !=
+    T_STRICT_NEQ, // !==
     T_AND, // &&
     T_OR, // ||
     T_ASSIGN, // =
@@ -32,6 +33,7 @@ export const enum TokenType {
     T_LT, // <
     T_LE, // <=
     T_EQ, // ==
+    T_STRICT_EQ, // ===
     T_LPAREN, // (
     T_LBRACKET, // [
     T_LBRACE, // {
@@ -48,6 +50,7 @@ export const enum TokenType {
     T_KW_OR, // or
     T_KW_AND, // and
     T_KW_IN, // in
+    T_KW_IS, // is
     T_KW_END
 }
 
@@ -74,6 +77,7 @@ Tokens[TokenType.T_INC] = '++';
 Tokens[TokenType.T_DEC] = '--';
 Tokens[TokenType.T_NOT] = '!';
 Tokens[TokenType.T_NEQ] = '!=';
+Tokens[TokenType.T_STRICT_NEQ] = '!==';
 Tokens[TokenType.T_AND] = '&&';
 Tokens[TokenType.T_OR] = '||';
 Tokens[TokenType.T_ASSIGN] = '=';
@@ -82,6 +86,7 @@ Tokens[TokenType.T_GE] = '>=';
 Tokens[TokenType.T_LT] = '<';
 Tokens[TokenType.T_LE] = '<=';
 Tokens[TokenType.T_EQ] = '==';
+Tokens[TokenType.T_STRICT_EQ] = '===';
 Tokens[TokenType.T_LPAREN] = '(';
 Tokens[TokenType.T_LBRACKET] = '[';
 Tokens[TokenType.T_LBRACE] = '{';
@@ -98,6 +103,7 @@ Tokens[TokenType.T_KW_NOT] = 'not'
 Tokens[TokenType.T_KW_OR] = 'or'
 Tokens[TokenType.T_KW_AND] = 'and'
 Tokens[TokenType.T_KW_IN] = 'in'
+Tokens[TokenType.T_KW_IS] = 'is'
 
 // list all keywords.
 const keywords: {[key: string]: TokenType} = {
@@ -105,6 +111,7 @@ const keywords: {[key: string]: TokenType} = {
     'or': TokenType.T_KW_OR,
     'and': TokenType.T_KW_AND,
     'in': TokenType.T_KW_IN,
+    'is': TokenType.T_KW_IS
 };
 
 // binary & unary
@@ -131,7 +138,10 @@ const binaryOperators: {[key: string]: OperatorPrecedence} = {
     '^': {'precedence': 17, 'associativity': OperatorAssociativity.Left},
     '&': {'precedence': 18, 'associativity': OperatorAssociativity.Left},
     '==': {'precedence': 20, 'associativity': OperatorAssociativity.Left},
+    '===': {'precedence': 20, 'associativity': OperatorAssociativity.Left},
+    'is': {'precedence': 20, 'associativity': OperatorAssociativity.Left},
     '!=': {'precedence': 20, 'associativity': OperatorAssociativity.Left},
+    '!==': {'precedence': 20, 'associativity': OperatorAssociativity.Left},
     '<': {'precedence': 20, 'associativity': OperatorAssociativity.Left},
     '>': {'precedence': 20, 'associativity': OperatorAssociativity.Left},
     '>=': {'precedence': 20, 'associativity': OperatorAssociativity.Left},

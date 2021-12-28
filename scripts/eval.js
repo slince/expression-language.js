@@ -3,7 +3,7 @@ import {Evaluator} from "../dist/expression.mjs";
 
 
 // const code = `!!+--a`;
-const code = `a in b`;
+const code = `10 !== '10'`;
 
 const evaluator = new Evaluator();
 

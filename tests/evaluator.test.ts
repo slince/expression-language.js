@@ -44,6 +44,13 @@ describe('Evaluator', ()=> {
         expect(eval2('a < b', {a: 10, b: 12})).toStrictEqual(true);
         expect(eval2('a <= b', {a: 10, b: 10})).toStrictEqual(true);
         expect(eval2('a in b', {a: 10, b: [10, 12]})).toStrictEqual(true);
+
+        expect(eval2('a == b', {a: 10, b: '10'})).toStrictEqual(true);
+        expect(eval2('a === b', {a: 10, b: '10'})).toStrictEqual(false);
+        expect(eval2('a is b', {a: 10, b: '10'})).toStrictEqual(false);
+
+        expect(eval2('a != b', {a: 10, b: '10'})).toStrictEqual(false);
+        expect(eval2('a !== b', {a: 10, b: '10'})).toStrictEqual(true);
     })
 
 
