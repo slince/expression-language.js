@@ -12,17 +12,19 @@ on:
       - master
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm install
-    - run: npm test
-    - run: bash <(curl -s https://codecov.io/bash)
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm install
+      - run: npm test
+      - env:
+            CODECOV_TOKEN: "2163fba9-2580-45e3-af53-404cab436c15"  
+        run:  curl -s https://codecov.io/bash
