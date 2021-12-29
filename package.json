@@ -1,6 +1,6 @@
 {
   "name": "expression-language.js",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "An engine for javascript that can compile and evaluate expressions written in typescript",
   "main": "dist/expression.mjs",
   "author": "slince <taosikai@yeah.net>",
