@@ -1,6 +1,6 @@
 # Expression-language.js
 
-[![Build Status](https://img.shields.io/github/workflow/status/slince/expression-language.js/ci?style=flat-square)](https://github.com/slince/expression-language.js/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/slince/expression-language.js/ci.yml?style=flat-square)](https://github.com/slince/expression-language.js/actions)
 [![Coverage Status](https://img.shields.io/codecov/c/github/slince/expression-language.js/master?style=flat-square)](https://codecov.io/github/slince/expression-language.js)
 [![NPM version](https://img.shields.io/npm/v/expression-language.js.svg?style=flat-square)](https://www.npmjs.com/package/expression-language.js)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/slince/expression-language.js/blob/master/LICENSE)
