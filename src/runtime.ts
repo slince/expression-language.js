@@ -1,6 +1,6 @@
 export interface Runtime {
     hasReference(property: string): boolean;
-    getReference(property: string): boolean;
+    getReference(property: string): any;
     setReference(property: string, value: any): void;
 }
 
@@ -19,7 +19,7 @@ export class GenericRuntime implements Runtime{
         return this.context.has(property)
     }
 
-    getReference(property: string): boolean{
+    getReference(property: string): any{
         return this.context.get(property);
     }
 
